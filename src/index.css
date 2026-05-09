@@ -1,0 +1,24 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-size: 16px;
+  }
+  body {
+    @apply bg-slate-900 text-slate-100 min-h-screen;
+  }
+  input, select, button {
+    @apply text-base;
+  }
+}
+
+@layer utilities {
+  .status-normal { @apply bg-green-500 text-white; }
+  .status-oos    { @apply bg-red-500 text-white; }
+  .status-error  { @apply bg-orange-500 text-white; }
+  .status-none   { @apply bg-slate-600 text-slate-300; }
+
+  .touch-target  { @apply min-h-[44px] min-w-[44px]; }
+}

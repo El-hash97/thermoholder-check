@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create *)",
+      "Bash(npx create-vite@latest . --template react)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"C:\\\\Users\\\\El\\\\Documents\\\\termoholder-check\\\\src\\\\constants\",)",
+      "Bash(\"C:\\\\Users\\\\El\\\\Documents\\\\termoholder-check\\\\src\\\\lib\\\\exporters\",)",
+      "Bash(\"C:\\\\Users\\\\El\\\\Documents\\\\termoholder-check\\\\src\\\\hooks\",)",
+      "Bash(\"C:\\\\Users\\\\El\\\\Documents\\\\termoholder-check\\\\src\\\\components\\\\layout\",)",
+      "Bash(\"C:\\\\Users\\\\El\\\\Documents\\\\termoholder-check\\\\src\\\\components\\\\input\",)",
+      "Bash(Out-Null)",
+      "Bash(Write-Host \"Directories created\")",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "mcp__plugin_everything-claude-code_playwright__browser_navigate",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(npx kill-port *)"
+    ]
+  }
+}
