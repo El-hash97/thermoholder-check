@@ -14,7 +14,10 @@
       "Bash(npm run *)",
       "mcp__plugin_everything-claude-code_playwright__browser_navigate",
       "mcp__Claude_Preview__preview_start",
-      "Bash(npx kill-port *)"
+      "Bash(npx kill-port *)",
+      "Bash(netstat -ano)",
+      "Bash(git commit -m ' *)",
+      "Bash(git add *)"
     ]
   }
 }
