@@ -91,7 +91,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
       {showShare && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="flex flex-col items-center gap-3">
-            <ShareCard entry={{ date, group, values }} />
+            <ShareCard date={date} entries={[{ group, values }]} />
             <button onClick={() => setShowShare(false)} className="text-slate-400 hover:text-white flex items-center gap-1 text-sm">
               <X size={16} /> Close
             </button>
