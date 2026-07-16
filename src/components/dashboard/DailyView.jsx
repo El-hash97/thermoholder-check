@@ -1,18 +1,16 @@
-import { useState } from 'react'
 import { formatDate, displayDate } from '../../lib/dateUtils.js'
 import { UNITS, GROUPS } from '../../constants/units.js'
 import { summarize, getStatus } from '../../lib/status.js'
 import SummaryCards from './SummaryCards.jsx'
 import StatusCell from './StatusCell.jsx'
+import OkNgScatterChart from './OkNgScatterChart.jsx'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 
-export default function DailyView({ entries }) {
-  const [date, setDate] = useState(formatDate())
-
+export default function DailyView({ entries, date, onDateChange }) {
   function shiftDate(delta) {
     const d = new Date(date + 'T00:00:00')
     d.setDate(d.getDate() + delta)
-    setDate(d.toISOString().slice(0, 10))
+    onDateChange(d.toISOString().slice(0, 10))
   }
 
   const dayEntries = entries.filter(e => e.date === date)
@@ -41,6 +39,8 @@ export default function DailyView({ entries }) {
       </div>
 
       <SummaryCards counts={counts} />
+
+      <OkNgScatterChart entries={dayEntries} />
 
       <div className="overflow-x-auto">
         <table className="w-full text-xs table-fixed">

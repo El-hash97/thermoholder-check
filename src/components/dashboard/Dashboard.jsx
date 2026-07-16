@@ -1,12 +1,9 @@
 ﻿import { useState } from 'react'
 import AlertBanner from '../layout/AlertBanner.jsx'
-import SummaryCards from './SummaryCards.jsx'
 import DailyView from './DailyView.jsx'
 import WeeklyView from './WeeklyView.jsx'
 import MonthlyView from './MonthlyView.jsx'
 import { formatDate } from '../../lib/dateUtils.js'
-import { summarize } from '../../lib/status.js'
-import { UNITS } from '../../constants/units.js'
 
 const TABS = [
   { id: 'daily',   label: 'Daily' },
@@ -15,7 +12,8 @@ const TABS = [
 ]
 
 export default function Dashboard({ data }) {
-  const [tab, setTab] = useState('daily')
+  const [tab, setTab]   = useState('daily')
+  const [date, setDate] = useState(formatDate())
   const entries = data?.entries ?? []
 
   const today = formatDate()
@@ -39,7 +37,7 @@ export default function Dashboard({ data }) {
       </div>
 
       <div className="mx-3 bg-slate-800 rounded-xl p-4">
-        {tab === 'daily'   && <DailyView entries={entries} />}
+        {tab === 'daily'   && <DailyView entries={entries} date={date} onDateChange={setDate} />}
         {tab === 'weekly'  && <WeeklyView entries={entries} />}
         {tab === 'monthly' && <MonthlyView entries={entries} />}
       </div>
