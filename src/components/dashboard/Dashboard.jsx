@@ -3,6 +3,7 @@ import AlertBanner from '../layout/AlertBanner.jsx'
 import DailyView from './DailyView.jsx'
 import WeeklyView from './WeeklyView.jsx'
 import MonthlyView from './MonthlyView.jsx'
+import ExportMenu from '../export/ExportMenu.jsx'
 import { formatDate } from '../../lib/dateUtils.js'
 
 const TABS = [
@@ -18,6 +19,7 @@ export default function Dashboard({ data }) {
 
   const today = formatDate()
   const todayEntries = entries.filter(e => e.date === today)
+  const dayEntries   = entries.filter(e => e.date === date)
 
   return (
     <div className="flex flex-col gap-3 pb-24">
@@ -42,6 +44,11 @@ export default function Dashboard({ data }) {
         {tab === 'monthly' && <MonthlyView entries={entries} />}
       </div>
 
+      {tab === 'daily' && (
+        <div className="mx-3 bg-slate-800 rounded-xl p-4">
+          <ExportMenu date={date} entries={dayEntries} />
+        </div>
+      )}
     </div>
   )
 }
