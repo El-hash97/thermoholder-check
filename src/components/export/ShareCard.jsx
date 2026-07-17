@@ -56,7 +56,7 @@ export default function ShareCard({ date, entries = [], id = 'share-card' }) {
       </div>
 
       <div style={{ marginBottom: '8px' }}>
-        <OkNgScatterChart entries={entries} compact width={328} height={150} />
+        <OkNgScatterChart entries={entries} compact width={328} height={160} />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '2px', marginBottom: '8px' }}>

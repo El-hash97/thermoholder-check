@@ -42,6 +42,10 @@ function computeMaxAbs(points) {
   return Math.max(10, padded)
 }
 
+function formatCompactTick(label) {
+  return label.replace(/^TH\s*/, '')
+}
+
 function DotShape({ cx, cy, fill, shape }) {
   if (shape === 'diamond') {
     const r = 5
@@ -94,17 +98,19 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
     <ScatterChart
       width={chartWidth}
       height={chartHeight}
-      margin={{ top: 10, right: 16, bottom: compact ? 4 : 24, left: 8 }}
+      margin={{ top: 10, right: 16, bottom: compact ? 8 : 24, left: 8 }}
     >
       <CartesianGrid stroke="#1e293b" />
       <XAxis
         dataKey="unit"
         type="category"
         allowDuplicatedCategory={false}
-        tick={compact ? false : { fill: '#94a3b8', fontSize: 10 }}
+        tick={{ fill: '#94a3b8', fontSize: compact ? 8 : 10 }}
+        tickFormatter={compact ? formatCompactTick : undefined}
         axisLine={{ stroke: '#334155' }}
         tickLine={false}
         interval={0}
+        height={20}
       />
       <YAxis
         dataKey="value"
