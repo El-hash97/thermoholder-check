@@ -38,7 +38,7 @@ export default function ShareCard({ date, entries = [], id = 'share-card' }) {
           {entries.map(e => (
             <span
               key={e.group}
-              style={{ background: GROUP_BADGE[e.group]?.bg ?? '#475569', color: '#fff', fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px' }}
+              style={{ background: GROUP_BADGE[e.group]?.bg ?? '#475569', color: '#fff', fontSize: '10px', lineHeight: 1, fontWeight: 700, padding: '1px 6px', borderRadius: '4px' }}
             >
               {GROUP_BADGE[e.group]?.label ?? e.group.toUpperCase()}
             </span>
@@ -63,13 +63,13 @@ export default function ShareCard({ date, entries = [], id = 'share-card' }) {
         {UNITS.map(u => (
           <div key={u.id} style={{ background: '#1e293b', borderRadius: '4px', padding: '3px 4px' }}>
             <div style={{ color: '#e2e8f0', fontSize: '9px', fontWeight: 600, marginBottom: '2px' }}>{u.label}</div>
-            <div style={{ display: 'flex', gap: '2px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '2px' }}>
               {entries.map(e => {
                 const { status, label } = getStatus(e.values?.[u.id] ?? 'X')
                 return (
                   <span
                     key={e.group}
-                    style={{ background: BG[status], color: '#fff', fontSize: '9px', fontFamily: 'monospace', borderRadius: '3px', padding: '1px 3px', flex: 1, textAlign: 'center' }}
+                    style={{ background: BG[status], color: '#fff', fontSize: '9px', lineHeight: 1, borderRadius: '3px', padding: '3px', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                   >
                     {label}
                   </span>
