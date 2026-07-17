@@ -105,6 +105,7 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
         dataKey="unit"
         type="category"
         allowDuplicatedCategory={false}
+        domain={UNITS.map(u => u.label)}
         tick={{ fill: '#94a3b8', fontSize: compact ? 8 : 10 }}
         tickFormatter={compact ? formatCompactTick : undefined}
         axisLine={{ stroke: '#334155' }}
@@ -123,7 +124,7 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
       />
       <ReferenceArea
         y1={-5} y2={5} fill={OK_COLOR} fillOpacity={0.15}
-        label={{ value: 'OK', position: 'insideTopLeft', fill: '#86efac', fontSize: 10 }}
+        label={{ value: 'OK', position: 'insideLeft', fill: '#86efac', fontSize: 10 }}
       />
       <ReferenceArea
         y1={5} y2={maxAbs} fill={NG_COLOR} fillOpacity={0.12}
