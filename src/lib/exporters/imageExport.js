@@ -1,6 +1,6 @@
 import html2canvas from 'html2canvas'
 
-export async function captureAndShare(elementId, filename = 'thermoholder-share.png') {
+export async function captureAndShare(elementId, filename = 'thermoholder-share.jpg') {
   const el = document.getElementById(elementId)
   if (!el) throw new Error('Element not found: ' + elementId)
 
@@ -10,8 +10,8 @@ export async function captureAndShare(elementId, filename = 'thermoholder-share.
     useCORS: true,
   })
 
-  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'))
-  const file = new File([blob], filename, { type: 'image/png' })
+  const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95))
+  const file = new File([blob], filename, { type: 'image/jpeg' })
 
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     await navigator.share({ files: [file], title: 'Thermoholder Check Sheet' })
