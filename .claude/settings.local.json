@@ -17,7 +17,8 @@
       "Bash(npx kill-port *)",
       "Bash(netstat -ano)",
       "Bash(git commit -m ' *)",
-      "Bash(git add *)"
+      "Bash(git add *)",
+      "Bash(npm uninstall *)"
     ]
   }
 }

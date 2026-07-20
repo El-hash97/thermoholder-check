@@ -4,8 +4,8 @@ import { formatDate } from '../../lib/dateUtils.js'
 import DateGroupPicker from './DateShiftGroupPicker.jsx'
 import UnitInputCell from './UnitInputCell.jsx'
 import { Save, Share2, X } from 'lucide-react'
-import { captureAndShare } from '../../lib/exporters/imageExport.js'
-import ShareCard from '../export/ShareCard.jsx'
+import { shareCanvas } from '../../lib/exporters/imageExport.js'
+import { renderShareCardCanvas } from '../../lib/exporters/drawShareCard.js'
 
 const emptyValues = () => Object.fromEntries(UNITS.map(u => [u.id, '']))
 
@@ -14,7 +14,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
   const [group,  setGroup]  = useState('red')
   const [values, setValues] = useState(emptyValues())
   const [saved,    setSaved]    = useState(false)
-  const [showShare, setShowShare] = useState(false)
+  const [previewUrl, setPreviewUrl] = useState(null)
   const [sharing,   setSharing]  = useState(false)
 
   useEffect(() => {
@@ -37,15 +37,15 @@ export default function InputCheckSheet({ data, onSubmit }) {
 
   async function handleShare() {
     setSharing(true)
-    setShowShare(true)
     try {
-      await new Promise(r => setTimeout(r, 300))
-      await captureAndShare('share-card')
+      const canvas = renderShareCardCanvas({ date, entries: [{ group, values }] })
+      setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
+      await shareCanvas(canvas)
     } catch (e) {
       console.error(e)
     } finally {
       setSharing(false)
-      setShowShare(false)
+      setPreviewUrl(null)
     }
   }
 
@@ -88,11 +88,11 @@ export default function InputCheckSheet({ data, onSubmit }) {
         </button>
       </div>
 
-      {showShare && (
+      {previewUrl && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="flex flex-col items-center gap-3">
-            <ShareCard date={date} entries={[{ group, values }]} />
-            <button onClick={() => setShowShare(false)} className="text-slate-400 hover:text-white flex items-center gap-1 text-sm">
+            <img src={previewUrl} alt="Share preview" className="max-w-full max-h-[70vh] rounded-xl" />
+            <button onClick={() => setPreviewUrl(null)} className="text-slate-400 hover:text-white flex items-center gap-1 text-sm">
               <X size={16} /> Close
             </button>
           </div>

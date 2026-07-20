@@ -52,7 +52,7 @@ export default function WeeklyView({ entries }) {
   function shiftWeek(delta) {
     const d = new Date(refDate + 'T00:00:00')
     d.setDate(d.getDate() + delta * 7)
-    setRefDate(d.toISOString().slice(0, 10))
+    setRefDate(formatDate(d))
   }
 
   const startLabel = weekDates[0]?.slice(8)

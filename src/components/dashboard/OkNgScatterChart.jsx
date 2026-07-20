@@ -3,7 +3,7 @@ import {
   Tooltip, CartesianGrid,
 } from 'recharts'
 import { UNITS } from '../../constants/units.js'
-import { getStatus } from '../../lib/status.js'
+import { buildPoints, computeMaxAbs, buildTicks, formatCompactTick } from '../../lib/chartData.js'
 
 const OK_COLOR = '#16a34a'
 const NG_COLOR = '#dc2626'
@@ -16,46 +16,6 @@ const GROUP_SHAPE = {
 const GROUP_LABEL = {
   red:   'Red team',
   white: 'White team',
-}
-
-function parseValue(raw) {
-  const v = String(raw ?? '').trim()
-  if (v.toLowerCase() === 'ok') return 0
-  return Number(v)
-}
-
-function buildPoints(entries) {
-  const points = []
-  ;(entries || []).forEach(entry => {
-    UNITS.forEach(unit => {
-      const raw = entry.values?.[unit.id]
-      const { status } = getStatus(raw)
-      if (status !== 'normal' && status !== 'oos') return
-      points.push({
-        unit: unit.label,
-        value: parseValue(raw),
-        group: entry.group,
-        status,
-      })
-    })
-  })
-  return points
-}
-
-function computeMaxAbs(points) {
-  const maxAbs = points.reduce((m, p) => Math.max(m, Math.abs(p.value)), 0)
-  const padded = Math.ceil((maxAbs + 2) / 5) * 5
-  return Math.max(10, padded)
-}
-
-function buildTicks(maxAbs) {
-  const ticks = []
-  for (let t = -maxAbs; t <= maxAbs; t += 5) ticks.push(t)
-  return ticks
-}
-
-function formatCompactTick(label) {
-  return label.replace(/^TH\s*/, '')
 }
 
 function DotShape({ cx, cy, fill, shape }) {
