@@ -13,7 +13,7 @@ export default function App() {
   const [group, setGroup] = useState('red')
 
   const monthKey = getMonthKey()
-  const { data, submitEntry, reset, getTodayEntries } = useThermoData(monthKey)
+  const { data, loading, submitEntry, reset, getTodayEntries } = useThermoData(monthKey)
 
   const todayEntries = getTodayEntries()
   const alertCount = (() => {
@@ -31,8 +31,11 @@ export default function App() {
     <div className="min-h-screen bg-zinc-950 text-slate-100">
       <Header group={group} />
       <main className="pt-2 min-h-[calc(100vh-120px)]">
-        {page === 'dashboard' && <Dashboard data={data} />}
-        {page === 'input' && (
+        {loading && (
+          <div className="text-center text-slate-400 py-10">Loading...</div>
+        )}
+        {!loading && page === 'dashboard' && <Dashboard data={data} />}
+        {!loading && page === 'input' && (
           <div className="px-3">
             <InputCheckSheet
               data={data}
@@ -43,7 +46,7 @@ export default function App() {
             />
           </div>
         )}
-        {page === 'settings' && (
+        {!loading && page === 'settings' && (
           <Settings monthKey={monthKey} onReset={reset} />
         )}
       </main>

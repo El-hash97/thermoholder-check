@@ -1,4 +1,4 @@
-﻿import { useState } from 'react'
+﻿import { useState, useEffect } from 'react'
 import { QUICK_CHECKER_REF, STD_TOLERANCE } from '../../constants/units.js'
 import { getStoredMonths } from '../../lib/storage.js'
 import ResetConfirmDialog from './ResetConfirmDialog.jsx'
@@ -7,7 +7,11 @@ const VERSION = '1.0.0'
 
 export default function Settings({ monthKey, onReset }) {
   const [showReset, setShowReset] = useState(false)
-  const storedMonths = getStoredMonths()
+  const [storedMonths, setStoredMonths] = useState([])
+
+  useEffect(() => {
+    getStoredMonths().then(setStoredMonths).catch(() => setStoredMonths([]))
+  }, [monthKey])
 
   function handleConfirmReset() {
     onReset()

@@ -1,35 +1,32 @@
-const PREFIX = 'thermo_data_'
-
-export function getMonthData(monthKey) {
-  try {
-    const raw = localStorage.getItem(PREFIX + monthKey)
-    if (!raw) return { month: monthKey, quickchecker_ref: 1500, std_tolerance: 5, entries: [] }
-    return JSON.parse(raw)
-  } catch {
-    return { month: monthKey, quickchecker_ref: 1500, std_tolerance: 5, entries: [] }
-  }
+export async function getMonthData(monthKey) {
+  const res = await fetch(`/api/month?month=${encodeURIComponent(monthKey)}`)
+  if (!res.ok) throw new Error('Failed to load month data')
+  return res.json()
 }
 
-export function saveEntry(monthKey, entry) {
-  const data = getMonthData(monthKey)
-  const idx = data.entries.findIndex(e => e.id === entry.id)
-  if (idx >= 0) {
-    data.entries[idx] = entry
-  } else {
-    data.entries.push(entry)
-  }
-  localStorage.setItem(PREFIX + monthKey, JSON.stringify(data))
+export async function saveEntry(monthKey, entry) {
+  const res = await fetch('/api/entry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ month: monthKey, entry }),
+  })
+  if (!res.ok) throw new Error('Failed to save entry')
+  return res.json()
 }
 
-export function resetMonth(monthKey) {
-  localStorage.removeItem(PREFIX + monthKey)
+export async function resetMonth(monthKey) {
+  const res = await fetch('/api/reset', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ month: monthKey }),
+  })
+  if (!res.ok) throw new Error('Failed to reset month')
 }
 
-export function getStoredMonths() {
-  return Object.keys(localStorage)
-    .filter(k => k.startsWith(PREFIX))
-    .map(k => k.replace(PREFIX, ''))
-    .sort()
+export async function getStoredMonths() {
+  const res = await fetch('/api/months')
+  if (!res.ok) throw new Error('Failed to load months')
+  return res.json()
 }
 
 export function buildEntryId(date, group) {
