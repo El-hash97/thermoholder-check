@@ -30,7 +30,11 @@ export default function InputCheckSheet({ data, onSubmit }) {
   }
 
   function handleSubmit() {
-    onSubmit(date, group, values)
+    const filled = Object.fromEntries(
+      Object.entries(values).map(([id, v]) => [id, String(v ?? '').trim() === '' ? 'X' : v])
+    )
+    setValues(filled)
+    onSubmit(date, group, filled)
     setSaved(true)
     setTimeout(() => setSaved(false), 2000)
   }

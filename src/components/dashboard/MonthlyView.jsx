@@ -2,28 +2,8 @@ import { useState } from 'react'
 import { getDaysInMonth } from '../../lib/dateUtils.js'
 import { UNITS, GROUPS } from '../../constants/units.js'
 import { getStatus } from '../../lib/status.js'
+import { exportMonthlyPDF } from '../../lib/exporters/pdfExport.js'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
-
-function downloadMonthCSV(entries, days, monthKey) {
-  const rows = [['Date','Unit','Red Value','Red Status','White Value','White Status']]
-  days.forEach(d => {
-    UNITS.forEach(unit => {
-      const redE   = entries.find(e => e.date === d && e.group === 'red')
-      const whiteE = entries.find(e => e.date === d && e.group === 'white')
-      const rv = redE?.values?.[unit.id]   ?? ''
-      const wv = whiteE?.values?.[unit.id] ?? ''
-      rows.push([d, unit.label, rv, rv ? getStatus(rv).status : 'none', wv, wv ? getStatus(wv).status : 'none'])
-    })
-  })
-  const csv  = rows.map(r => r.join(',')).join('\n')
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
-  const url  = URL.createObjectURL(blob)
-  const a    = document.createElement('a')
-  a.href     = url
-  a.download = `monthly_${monthKey}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
-}
 
 const BG = {
   normal: 'bg-green-600',
@@ -67,8 +47,8 @@ export default function MonthlyView({ entries }) {
       </div>
 
       <button
-        onClick={() => downloadMonthCSV(entries, days, monthKey)}
-        title="Export to CSV"
+        onClick={() => exportMonthlyPDF(entries, days, monthKey)}
+        title="Export to PDF"
         className="fixed bottom-20 right-4 w-13 h-13 p-3 rounded-full bg-green-600 hover:bg-green-500 active:bg-green-700 shadow-lg z-10 touch-target flex items-center justify-center"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
