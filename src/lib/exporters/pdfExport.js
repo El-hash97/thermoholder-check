@@ -54,9 +54,9 @@ function drawHeader(doc, logo, periodLabel) {
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(71, 85, 105)
-  doc.text(periodLabel, pageWidth / 2, 21, { align: 'center' })
+  doc.text(periodLabel, pageWidth - leftX, 15, { align: 'right' })
 
-  doc.text(`Quick Checker Ref: ${QUICK_CHECKER_REF}°C | Standar: ±${STD_TOLERANCE}°C`, pageWidth - leftX, 15, { align: 'right' })
+  doc.text(`Quick Checker Ref: ${QUICK_CHECKER_REF}°C | Standar: ±${STD_TOLERANCE}°C`, pageWidth - leftX, 21, { align: 'right' })
 }
 
 const TYPE_ABBR = { Manual: 'Man', Digital: 'Dig' }
