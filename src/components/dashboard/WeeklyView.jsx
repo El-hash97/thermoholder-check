@@ -10,7 +10,7 @@ const BG = {
   normal: 'bg-green-600',
   oos:    'bg-red-600',
   error:  'bg-orange-500',
-  none:   'bg-slate-700',
+  none:   'bg-slate-300',
 }
 
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
@@ -42,13 +42,13 @@ export default function WeeklyView({ entries }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <button onClick={() => shiftWeek(-1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target">
+        <button onClick={() => shiftWeek(-1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-medium text-slate-200">
+        <span className="text-sm font-medium text-slate-700">
           {month} · {startLabel}–{endLabel}
         </span>
-        <button onClick={() => shiftWeek(1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target">
+        <button onClick={() => shiftWeek(1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target">
           <ChevronRight size={20} />
         </button>
       </div>
@@ -66,8 +66,8 @@ export default function WeeklyView({ entries }) {
       </button>
 
       {/* Status legend */}
-      <div className="flex gap-3 text-[11px] text-slate-400 flex-wrap">
-        {[['bg-green-600','Normal'],['bg-red-600','OOS'],['bg-orange-500','Error'],['bg-slate-700','Not Available']].map(([bg, l]) => (
+      <div className="flex gap-3 text-[11px] text-slate-500 flex-wrap">
+        {[['bg-green-600','Normal'],['bg-red-600','OOS'],['bg-orange-500','Error'],['bg-slate-300','Not Available']].map(([bg, l]) => (
           <span key={l} className="flex items-center gap-1">
             <span className={`${bg} w-2.5 h-2.5 rounded-sm inline-block`}/>{l}
           </span>
@@ -82,9 +82,9 @@ export default function WeeklyView({ entries }) {
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="text-left text-[11px] text-slate-400 font-medium pr-2 w-14">Unit</th>
+              <th className="text-left text-[11px] text-slate-500 font-medium pr-2 w-14">Unit</th>
               {weekDates.map((d, i) => (
-                <th key={d} className="text-center text-[11px] text-slate-400 font-medium px-0.5 min-w-[36px]">
+                <th key={d} className="text-center text-[11px] text-slate-500 font-medium px-0.5 min-w-[36px]">
                   {DAY_LABELS[i]}<br/>
                   <span className="text-[10px]">{d.slice(8)}</span><br/>
                   <span className="flex gap-[2px] justify-center mt-0.5">
@@ -98,7 +98,7 @@ export default function WeeklyView({ entries }) {
           <tbody>
             {UNITS.map(unit => (
               <tr key={unit.id}>
-                <td className="text-[10px] text-slate-300 pr-2 py-0.5 leading-tight">{unit.label}</td>
+                <td className="text-[10px] text-slate-700 pr-2 py-0.5 leading-tight">{unit.label}</td>
                 {weekDates.map(d => {
                   const redStatus   = groupStatus(entries, unit.id, d, 'red')
                   const whiteStatus = groupStatus(entries, unit.id, d, 'white')

@@ -4,7 +4,7 @@ const BG = {
   normal: 'bg-green-600 text-white',
   oos:    'bg-red-600 text-white',
   error:  'bg-orange-500 text-white',
-  none:   'bg-slate-700 text-slate-400',
+  none:   'bg-slate-200 text-slate-500',
 }
 
 export default function StatusCell({ value, onClick, small }) {

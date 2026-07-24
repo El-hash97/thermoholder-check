@@ -10,7 +10,7 @@ const BG = {
   normal: 'bg-green-600',
   oos:    'bg-red-600',
   error:  'bg-orange-500',
-  none:   'bg-slate-700',
+  none:   'bg-slate-300',
 }
 
 export default function MonthlyView({ entries }) {
@@ -38,11 +38,11 @@ export default function MonthlyView({ entries }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <button onClick={() => shiftMonth(-1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target">
+        <button onClick={() => shiftMonth(-1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-medium text-slate-200">{monthKey}</span>
-        <button onClick={() => shiftMonth(1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target">
+        <span className="text-sm font-medium text-slate-700">{monthKey}</span>
+        <button onClick={() => shiftMonth(1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target">
           <ChevronRight size={20} />
         </button>
       </div>
@@ -60,30 +60,30 @@ export default function MonthlyView({ entries }) {
       </button>
 
       {tooltip && (
-        <div className="bg-slate-700 border border-slate-600 rounded-lg p-3 text-xs">
-          <p className="font-semibold text-slate-200">{tooltip.unit} · {tooltip.date}</p>
+        <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs shadow-sm">
+          <p className="font-semibold text-slate-800">{tooltip.unit} · {tooltip.date}</p>
           {GROUPS.map(g => {
             const entry = entries.find(e => e.date === tooltip.date && e.group === g.id)
             const val = entry?.values?.[tooltip.unitId] ?? 'X'
             const st = getStatus(val).status
             return (
-              <p key={g.id} className="text-slate-400 mt-0.5">
-                {g.label}: <span className={`font-mono font-bold ${st === 'normal' ? 'text-green-400' : st === 'oos' ? 'text-red-400' : st === 'error' ? 'text-orange-400' : 'text-slate-500'}`}>{val || 'X'}</span>
+              <p key={g.id} className="text-slate-500 mt-0.5">
+                {g.label}: <span className={`font-mono font-bold ${st === 'normal' ? 'text-green-600' : st === 'oos' ? 'text-red-600' : st === 'error' ? 'text-orange-500' : 'text-slate-400'}`}>{val || 'X'}</span>
               </p>
             )
           })}
-          <button onClick={() => setTooltip(null)} className="mt-2 text-slate-500 hover:text-slate-300 text-[11px]">Close</button>
+          <button onClick={() => setTooltip(null)} className="mt-2 text-slate-400 hover:text-slate-600 text-[11px]">Close</button>
         </div>
       )}
 
       {/* Legend */}
-      <div className="flex items-center gap-3 text-[11px] text-slate-400 flex-wrap">
+      <div className="flex items-center gap-3 text-[11px] text-slate-500 flex-wrap">
         <div className="flex gap-[3px] items-center">
           <span className="w-4 h-3 rounded-sm bg-rose-700 flex items-center justify-center text-[8px] text-white font-bold">R</span>
           <span className="w-4 h-3 rounded-sm bg-slate-500 flex items-center justify-center text-[8px] text-white font-bold">W</span>
         </div>
-        <span className="text-slate-600">|</span>
-        {[['bg-green-600','Normal'],['bg-red-600','OOS'],['bg-orange-500','Error'],['bg-slate-700','Not Available']].map(([bg,l]) => (
+        <span className="text-slate-300">|</span>
+        {[['bg-green-600','Normal'],['bg-red-600','OOS'],['bg-orange-500','Error'],['bg-slate-300','Not Available']].map(([bg,l]) => (
           <span key={l} className="flex items-center gap-1"><span className={`${bg} w-2.5 h-2.5 rounded-sm inline-block`}/>{l}</span>
         ))}
       </div>
@@ -96,9 +96,9 @@ export default function MonthlyView({ entries }) {
         <table className="w-full">
           <thead>
             <tr>
-              <th className="text-left text-[10px] text-slate-400 font-medium pr-1 w-14 sticky left-0 bg-slate-800">Unit</th>
+              <th className="text-left text-[10px] text-slate-500 font-medium pr-1 w-14 sticky left-0 bg-white">Unit</th>
               {days.map(d => (
-                <th key={d} className="text-center text-[10px] text-slate-500 font-medium px-px min-w-[28px]">
+                <th key={d} className="text-center text-[10px] text-slate-400 font-medium px-px min-w-[28px]">
                   {d.slice(8)}<br/>
                   <span className="flex gap-[2px] justify-center mt-0.5">
                     <span className="w-3 h-2.5 rounded-sm bg-rose-700 flex items-center justify-center text-[7px] text-white font-bold leading-none">R</span>
@@ -111,7 +111,7 @@ export default function MonthlyView({ entries }) {
           <tbody>
             {UNITS.map(unit => (
               <tr key={unit.id}>
-                <td className="text-[10px] text-slate-300 pr-1 py-px sticky left-0 bg-slate-800">{unit.label}</td>
+                <td className="text-[10px] text-slate-700 pr-1 py-px sticky left-0 bg-white">{unit.label}</td>
                 {days.map(d => (
                   <td key={d} className="py-px px-px">
                     <div

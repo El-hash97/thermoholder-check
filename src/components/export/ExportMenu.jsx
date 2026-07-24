@@ -25,7 +25,7 @@ export default function ExportMenu({ date, entries }) {
 
   return (
     <div>
-      <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Share</p>
+      <p className="text-xs text-slate-400 uppercase tracking-wider mb-2">Share</p>
       <div className="flex gap-2">
         <button
           onClick={handle}

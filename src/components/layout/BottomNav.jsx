@@ -8,13 +8,13 @@ const NAV = [
 
 export default function BottomNav({ active, onChange, alertCount }) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 z-20 flex">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-20 flex">
       {NAV.map(({ id, label, Icon }) => (
         <button
           key={id}
           onClick={() => onChange(id)}
           className={`flex-1 flex flex-col items-center justify-center py-2 touch-target relative
-            ${active === id ? 'text-blue-400' : 'text-slate-400 hover:text-slate-200'}`}
+            ${active === id ? 'text-blue-600' : 'text-slate-400 hover:text-slate-600'}`}
         >
           <Icon size={22} />
           {id === 'dashboard' && alertCount > 0 && (

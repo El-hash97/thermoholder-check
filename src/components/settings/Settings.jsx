@@ -20,38 +20,38 @@ export default function Settings({ monthKey, onReset }) {
 
   return (
     <div className="flex flex-col gap-4 pb-24 mx-3">
-      <div className="bg-slate-800 rounded-xl p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">Reference Standard</h2>
+      <div className="bg-white rounded-xl p-4 flex flex-col gap-3">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Reference Standard</h2>
         <div className="flex justify-between items-center">
-          <span className="text-slate-300">Quick Checker Ref</span>
-          <span className="font-mono font-bold text-white">{QUICK_CHECKER_REF}°C</span>
+          <span className="text-slate-600">Quick Checker Ref</span>
+          <span className="font-mono font-bold text-slate-900">{QUICK_CHECKER_REF}°C</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-slate-300">Standard Tolerance</span>
-          <span className="font-mono font-bold text-white">±{STD_TOLERANCE}°C</span>
+          <span className="text-slate-600">Standard Tolerance</span>
+          <span className="font-mono font-bold text-slate-900">±{STD_TOLERANCE}°C</span>
         </div>
       </div>
 
-      <div className="bg-slate-800 rounded-xl p-4 flex flex-col gap-3">
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">App Information</h2>
+      <div className="bg-white rounded-xl p-4 flex flex-col gap-3">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">App Information</h2>
         <div className="flex justify-between items-center">
-          <span className="text-slate-300">Version</span>
+          <span className="text-slate-600">Version</span>
           <span className="text-slate-400">{VERSION}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-slate-300">Active Month</span>
-          <span className="font-mono text-slate-200">{monthKey}</span>
+          <span className="text-slate-600">Active Month</span>
+          <span className="font-mono text-slate-700">{monthKey}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-slate-300">Stored Data</span>
+          <span className="text-slate-600">Stored Data</span>
           <span className="text-slate-400">{storedMonths.length} month(s)</span>
         </div>
       </div>
 
-      <div className="bg-slate-800 rounded-xl p-4">
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-3">Reset Data</h2>
-        <p className="text-slate-400 text-sm mb-3">
-          Delete all check sheet data for <strong className="text-slate-200">{monthKey}</strong>. This action cannot be undone.
+      <div className="bg-white rounded-xl p-4">
+        <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Reset Data</h2>
+        <p className="text-slate-500 text-sm mb-3">
+          Delete all check sheet data for <strong className="text-slate-700">{monthKey}</strong>. This action cannot be undone.
         </p>
         <button
           onClick={() => setShowReset(true)}

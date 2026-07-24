@@ -28,11 +28,11 @@ export default function App() {
   })()
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-slate-100">
+    <div className="min-h-screen bg-slate-200 text-slate-900">
       <Header group={group} />
       <main className="pt-2 min-h-[calc(100vh-120px)]">
         {loading && (
-          <div className="text-center text-slate-400 py-10">Loading...</div>
+          <div className="text-center text-slate-500 py-10">Loading...</div>
         )}
         {!loading && page === 'dashboard' && <Dashboard data={data} />}
         {!loading && page === 'input' && (

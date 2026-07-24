@@ -50,7 +50,7 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
   if (points.length === 0) {
     return (
       <div
-        className="flex items-center justify-center text-xs text-slate-500"
+        className="flex items-center justify-center text-xs text-slate-400"
         style={{ height: height ?? 160 }}
       >
         No data
@@ -72,15 +72,15 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
       height={chartHeight}
       margin={{ top: 10, right: 16, bottom: compact ? 8 : 24, left: 8 }}
     >
-      <CartesianGrid stroke="#1e293b" />
+      <CartesianGrid stroke="#e2e8f0" />
       <XAxis
         dataKey="unit"
         type="category"
         allowDuplicatedCategory={false}
         domain={UNITS.map(u => u.label)}
-        tick={{ fill: '#94a3b8', fontSize: compact ? 8 : 10 }}
+        tick={{ fill: '#64748b', fontSize: compact ? 8 : 10 }}
         tickFormatter={compact ? formatCompactTick : undefined}
-        axisLine={{ stroke: '#334155' }}
+        axisLine={{ stroke: '#cbd5e1' }}
         tickLine={false}
         interval={0}
         height={20}
@@ -90,28 +90,28 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
         type="number"
         domain={[-maxAbs, maxAbs]}
         ticks={buildTicks(maxAbs)}
-        tick={{ fill: '#94a3b8', fontSize: 10 }}
-        axisLine={{ stroke: '#334155' }}
+        tick={{ fill: '#64748b', fontSize: 10 }}
+        axisLine={{ stroke: '#cbd5e1' }}
         tickLine={false}
         width={28}
       />
       <ReferenceArea
-        y1={-5} y2={5} fill={OK_COLOR} fillOpacity={0.15}
-        label={{ value: 'OK', position: 'insideLeft', fill: '#86efac', fontSize: 10 }}
+        y1={-5} y2={5} fill={OK_COLOR} fillOpacity={0.12}
+        label={{ value: 'OK', position: 'insideLeft', fill: '#16a34a', fontSize: 10 }}
       />
       <ReferenceArea
-        y1={5} y2={maxAbs} fill={NG_COLOR} fillOpacity={0.12}
-        label={{ value: 'NG', position: 'insideTopLeft', fill: '#fca5a5', fontSize: 10 }}
+        y1={5} y2={maxAbs} fill={NG_COLOR} fillOpacity={0.1}
+        label={{ value: 'NG', position: 'insideTopLeft', fill: '#dc2626', fontSize: 10 }}
       />
       <ReferenceArea
-        y1={-maxAbs} y2={-5} fill={NG_COLOR} fillOpacity={0.12}
-        label={{ value: 'NG', position: 'insideBottomLeft', fill: '#fca5a5', fontSize: 10 }}
+        y1={-maxAbs} y2={-5} fill={NG_COLOR} fillOpacity={0.1}
+        label={{ value: 'NG', position: 'insideBottomLeft', fill: '#dc2626', fontSize: 10 }}
       />
-      <ReferenceLine y={0} stroke="#334155" strokeDasharray="3 3" />
+      <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="3 3" />
       {!compact && (
         <Tooltip
           cursor={{ strokeDasharray: '3 3' }}
-          contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }}
+          contentStyle={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 12 }}
           formatter={(value, _name, props) => [
             `${value} (${props.payload.status === 'normal' ? 'OK' : 'NG'})`,
             props.payload.unit,
@@ -127,7 +127,7 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
   return (
     <div className="flex flex-col gap-2">
       {compact ? chart : <div className="overflow-x-auto">{chart}</div>}
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400 px-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500 px-1">
         <span className="flex items-center gap-1">
           <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: OK_COLOR }} /> OK (±5°C)
         </span>
@@ -136,12 +136,12 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
         </span>
         {groupsPresent.includes('red') && (
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full inline-block bg-slate-300" /> {GROUP_LABEL.red} (circle)
+            <span className="w-2.5 h-2.5 rounded-full inline-block bg-slate-400" /> {GROUP_LABEL.red} (circle)
           </span>
         )}
         {groupsPresent.includes('white') && (
           <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 inline-block bg-slate-300" style={{ transform: 'rotate(45deg)' }} /> {GROUP_LABEL.white} (diamond)
+            <span className="w-2.5 h-2.5 inline-block bg-slate-400" style={{ transform: 'rotate(45deg)' }} /> {GROUP_LABEL.white} (diamond)
           </span>
         )}
       </div>

@@ -57,12 +57,12 @@ export default function InputCheckSheet({ data, onSubmit }) {
     <div className="flex flex-col gap-4 pb-24">
       <DateGroupPicker date={date} group={group} onChange={handleChange} />
 
-      <div className="bg-slate-800 rounded-xl p-4 flex flex-col gap-1">
+      <div className="bg-white rounded-xl p-4 flex flex-col gap-1">
         <div className="flex items-center justify-between mb-2">
-          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
-            TH Values — Team <span className="text-rose-400">{group.toUpperCase()}</span>
+          <h2 className="text-sm font-semibold text-slate-600 uppercase tracking-wider">
+            TH Values — Team <span className="text-rose-600">{group.toUpperCase()}</span>
           </h2>
-          <span className="text-xs text-slate-500">QC: 1500°C · Std: ±5°C</span>
+          <span className="text-xs text-slate-400">QC: 1500°C · Std: ±5°C</span>
         </div>
         {UNITS.map(unit => (
           <UnitInputCell
@@ -78,7 +78,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
         <button
           onClick={handleShare}
           disabled={sharing}
-          className="flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-base font-semibold touch-target transition-colors bg-slate-700 hover:bg-slate-600 text-white disabled:opacity-60"
+          className="flex items-center justify-center gap-2 px-5 py-4 rounded-xl text-base font-semibold touch-target transition-colors bg-slate-200 hover:bg-slate-300 text-slate-700 disabled:opacity-60"
         >
           <Share2 size={20} />
         </button>

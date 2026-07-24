@@ -29,11 +29,11 @@ export default function DailyView({ entries, date, onDateChange }) {
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center justify-between">
-        <button onClick={() => shiftDate(-1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target">
+        <button onClick={() => shiftDate(-1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target">
           <ChevronLeft size={20} />
         </button>
-        <span className="text-sm font-medium text-slate-200">{displayDate(date)}</span>
-        <button onClick={() => shiftDate(1)} className="p-2 rounded-lg bg-slate-700 hover:bg-slate-600 touch-target" disabled={date >= formatDate()}>
+        <span className="text-sm font-medium text-slate-700">{displayDate(date)}</span>
+        <button onClick={() => shiftDate(1)} className="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 touch-target" disabled={date >= formatDate()}>
           <ChevronRight size={20} />
         </button>
       </div>
@@ -50,7 +50,7 @@ export default function DailyView({ entries, date, onDateChange }) {
             <col />
           </colgroup>
           <thead>
-            <tr className="text-slate-400">
+            <tr className="text-slate-500">
               <th className="text-left py-1 pr-2 font-medium">Unit</th>
               <th className="text-center py-1 px-1">
                 <span className="inline-flex items-center justify-center w-full h-5 rounded bg-rose-700 text-white text-[11px] font-bold">Red</span>
@@ -62,8 +62,8 @@ export default function DailyView({ entries, date, onDateChange }) {
           </thead>
           <tbody>
             {UNITS.map(unit => (
-              <tr key={unit.id} className="border-t border-slate-700/50">
-                <td className="py-1 pr-2 text-slate-300 font-medium">{unit.label}</td>
+              <tr key={unit.id} className="border-t border-slate-200">
+                <td className="py-1 pr-2 text-slate-700 font-medium">{unit.label}</td>
                 {GROUPS.map(g => (
                   <td key={g.id} className="py-1 px-1">
                     <StatusCell value={getVal(unit.id, g.id)} />

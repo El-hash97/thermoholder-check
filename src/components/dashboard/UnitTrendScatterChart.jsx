@@ -31,7 +31,7 @@ function ChartTooltip({ active, payload }) {
   if (!active || !payload || payload.length === 0) return null
   const p = payload[0].payload
   return (
-    <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12, padding: '6px 10px', color: '#e2e8f0' }}>
+    <div style={{ background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: 8, fontSize: 12, padding: '6px 10px', color: '#1e293b' }}>
       <div>{p.unitLabel} · {p.date}</div>
       <div>{p.value} ({p.status === 'normal' ? 'OK' : 'NG'})</div>
     </div>
@@ -60,7 +60,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
 
   const dense = dates.length > 10
   const pointRadius = dense ? 3.5 : 5
-  const chartHeight = 340
+  const chartHeight = 480
 
   return (
     <div className="flex flex-col gap-2">
@@ -70,7 +70,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
             key={g.id}
             onClick={() => setActiveGroup(g.id)}
             className={`px-3 py-1.5 rounded-lg font-medium touch-target transition-colors ${
-              activeGroup === g.id ? 'bg-slate-700 text-slate-200' : 'text-slate-400 hover:text-slate-200'
+              activeGroup === g.id ? 'bg-slate-200 text-slate-800' : 'text-slate-400 hover:text-slate-600'
             }`}
           >
             {g.label}
@@ -79,7 +79,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
       </div>
 
       {points.length === 0 ? (
-        <div className="flex items-center justify-center text-xs text-slate-500" style={{ height: 160 }}>
+        <div className="flex items-center justify-center text-xs text-slate-400" style={{ height: 160 }}>
           No data
         </div>
       ) : (
@@ -87,15 +87,15 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         <div className="-mx-4">
           <ResponsiveContainer width="100%" height={chartHeight}>
             <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
-              <CartesianGrid stroke="#1e293b" />
+              <CartesianGrid stroke="#e2e8f0" />
               <XAxis
                 dataKey="date"
                 type="category"
                 allowDuplicatedCategory={false}
                 domain={dates}
-                tick={{ fill: '#94a3b8', fontSize: 10 }}
+                tick={{ fill: '#64748b', fontSize: 10 }}
                 tickFormatter={d => d.slice(8)}
-                axisLine={{ stroke: '#334155' }}
+                axisLine={{ stroke: '#cbd5e1' }}
                 tickLine={false}
                 interval={0}
                 height={20}
@@ -106,24 +106,24 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                 domain={[-maxAbs, maxAbs]}
                 ticks={fineTicks}
                 interval={0}
-                tick={{ fill: '#94a3b8', fontSize: 8 }}
-                axisLine={{ stroke: '#334155' }}
+                tick={{ fill: '#64748b', fontSize: 8 }}
+                axisLine={{ stroke: '#cbd5e1' }}
                 tickLine={false}
                 width={28}
               />
               <ReferenceArea
-                y1={-5} y2={5} fill={OK_COLOR} fillOpacity={0.15}
-                label={{ value: 'OK', position: 'insideLeft', fill: '#86efac', fontSize: 10 }}
+                y1={-5} y2={5} fill={OK_COLOR} fillOpacity={0.12}
+                label={{ value: 'OK', position: 'insideLeft', fill: '#16a34a', fontSize: 10 }}
               />
               <ReferenceArea
-                y1={5} y2={maxAbs} fill={NG_COLOR} fillOpacity={0.12}
-                label={{ value: 'NG', position: 'insideTopLeft', fill: '#fca5a5', fontSize: 10 }}
+                y1={5} y2={maxAbs} fill={NG_COLOR} fillOpacity={0.1}
+                label={{ value: 'NG', position: 'insideTopLeft', fill: '#dc2626', fontSize: 10 }}
               />
               <ReferenceArea
-                y1={-maxAbs} y2={-5} fill={NG_COLOR} fillOpacity={0.12}
-                label={{ value: 'NG', position: 'insideBottomLeft', fill: '#fca5a5', fontSize: 10 }}
+                y1={-maxAbs} y2={-5} fill={NG_COLOR} fillOpacity={0.1}
+                label={{ value: 'NG', position: 'insideBottomLeft', fill: '#dc2626', fontSize: 10 }}
               />
-              <ReferenceLine y={0} stroke="#334155" strokeDasharray="3 3" />
+              <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="3 3" />
               <Tooltip
                 cursor={{ strokeDasharray: '3 3' }}
                 content={<ChartTooltip />}
@@ -144,12 +144,12 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         </div>
       )}
 
-      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-400 px-1">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 text-[10px] text-slate-500 px-1">
         {UNITS.map((unit, i) => (
           <button
             key={unit.id}
             onClick={() => setSelectedUnit(prev => prev === unit.id ? null : unit.id)}
-            className={`flex items-center gap-1 px-1 rounded ${selectedUnit === unit.id ? 'bg-slate-700 text-slate-200' : ''}`}
+            className={`flex items-center gap-1 px-1 rounded ${selectedUnit === unit.id ? 'bg-slate-200 text-slate-800' : ''}`}
           >
             <span className="w-2.5 h-2.5 rounded-full inline-block" style={{ background: UNIT_COLORS[i] }} />
             {unit.label}
@@ -157,12 +157,12 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-400 px-1">
+      <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500 px-1">
         <span className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 rounded-full inline-block bg-slate-300" /> OK (circle)
+          <span className="w-2.5 h-2.5 rounded-full inline-block bg-slate-400" /> OK (circle)
         </span>
         <span className="flex items-center gap-1">
-          <span className="w-2.5 h-2.5 inline-block bg-slate-300" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} /> NG (triangle)
+          <span className="w-2.5 h-2.5 inline-block bg-slate-400" style={{ clipPath: 'polygon(50% 0%, 0% 100%, 100% 100%)' }} /> NG (triangle)
         </span>
       </div>
     </div>
