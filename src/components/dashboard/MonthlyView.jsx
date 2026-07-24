@@ -89,15 +89,7 @@ export default function MonthlyView({ entries }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        {GROUPS.map(g => (
-          <UnitTrendScatterChart
-            key={g.id}
-            entries={entries}
-            dates={days}
-            group={g.id}
-            title={`${g.label} team`}
-          />
-        ))}
+        <UnitTrendScatterChart key={days[0]} entries={entries} dates={days} />
       </div>
 
       <div className="overflow-x-auto">
