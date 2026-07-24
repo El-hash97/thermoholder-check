@@ -94,6 +94,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
           No data
         </div>
       ) : (
+        // -mx-4 offsets Dashboard.jsx's card p-4 so the chart reaches the card edge
         <div className="-mx-4">
           <ResponsiveContainer width="100%" height={chartHeight}>
             <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
