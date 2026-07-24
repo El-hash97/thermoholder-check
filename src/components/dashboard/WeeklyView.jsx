@@ -75,7 +75,7 @@ export default function WeeklyView({ entries }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        <UnitTrendScatterChart entries={entries} dates={weekDates} />
+        <UnitTrendScatterChart key={weekDates[0]} entries={entries} dates={weekDates} />
       </div>
 
       <div className="overflow-x-auto">
