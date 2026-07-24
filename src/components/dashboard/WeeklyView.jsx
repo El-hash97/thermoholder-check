@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { getWeekDates, formatDate } from '../../lib/dateUtils.js'
-import { UNITS, GROUPS } from '../../constants/units.js'
+import { UNITS } from '../../constants/units.js'
 import { getStatus } from '../../lib/status.js'
 import { exportWeeklyPDF } from '../../lib/exporters/pdfExport.js'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
@@ -75,15 +75,7 @@ export default function WeeklyView({ entries }) {
       </div>
 
       <div className="flex flex-col gap-4">
-        {GROUPS.map(g => (
-          <UnitTrendScatterChart
-            key={g.id}
-            entries={entries}
-            dates={weekDates}
-            group={g.id}
-            title={`${g.label} team`}
-          />
-        ))}
+        <UnitTrendScatterChart entries={entries} dates={weekDates} />
       </div>
 
       <div className="overflow-x-auto">
