@@ -40,3 +40,26 @@ export function buildTicks(maxAbs) {
 export function formatCompactTick(label) {
   return label.replace(/^TH\s*/, '')
 }
+
+export function buildTrendPoints(entries, dates, group) {
+  const points = []
+  dates.forEach(date => {
+    entries
+      .filter(e => e.date === date && e.group === group)
+      .forEach(entry => {
+        UNITS.forEach(unit => {
+          const raw = entry.values?.[unit.id]
+          const { status } = getStatus(raw)
+          if (status !== 'normal' && status !== 'oos') return
+          points.push({
+            date,
+            unit: unit.id,
+            unitLabel: unit.label,
+            value: parseValue(raw),
+            status,
+          })
+        })
+      })
+  })
+  return points
+}
