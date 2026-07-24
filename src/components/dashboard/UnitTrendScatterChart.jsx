@@ -6,34 +6,25 @@ import {
 } from 'recharts'
 import { UNITS, GROUPS } from '../../constants/units.js'
 import { UNIT_COLORS } from '../../lib/unitColors.js'
-import { buildTrendPoints, computeMaxAbs, buildTicks } from '../../lib/chartData.js'
+import { buildTrendPoints, computeMaxAbs } from '../../lib/chartData.js'
 
 const OK_COLOR = '#16a34a'
 const NG_COLOR = '#dc2626'
-const OK_LABEL_COLOR = '#4ade80'
-const NG_LABEL_COLOR = '#f87171'
 
-function PointShape({ cx, cy, fill, status, value, dimmed, r, fontSize }) {
+function PointShape({ cx, cy, fill, status, dimmed, r }) {
   const opacity = dimmed ? 0.15 : 1
-  const labelColor = status === 'oos' ? NG_LABEL_COLOR : OK_LABEL_COLOR
-  return (
-    <g>
-      {status === 'oos' ? (
-        <path
-          d={`M ${cx} ${cy - r} L ${cx + r} ${cy + r} L ${cx - r} ${cy + r} Z`}
-          fill={fill}
-          opacity={opacity}
-          stroke="#0f172a"
-          strokeWidth={1}
-        />
-      ) : (
-        <circle cx={cx} cy={cy} r={r} fill={fill} opacity={opacity} stroke="#0f172a" strokeWidth={1} />
-      )}
-      <text x={cx} y={cy - r - 4} textAnchor="middle" fontSize={fontSize} fill={labelColor} opacity={opacity}>
-        {value}
-      </text>
-    </g>
-  )
+  if (status === 'oos') {
+    return (
+      <path
+        d={`M ${cx} ${cy - r} L ${cx + r} ${cy + r} L ${cx - r} ${cy + r} Z`}
+        fill={fill}
+        opacity={opacity}
+        stroke="#0f172a"
+        strokeWidth={1}
+      />
+    )
+  }
+  return <circle cx={cx} cy={cy} r={r} fill={fill} opacity={opacity} stroke="#0f172a" strokeWidth={1} />
 }
 
 function ChartTooltip({ active, payload }) {
@@ -47,17 +38,15 @@ function ChartTooltip({ active, payload }) {
   )
 }
 
-function renderShape(color, selectedUnit, unitId, r, fontSize) {
+function renderShape(color, selectedUnit, unitId, r) {
   return (props) => (
     <PointShape
       cx={props.cx}
       cy={props.cy}
       fill={color}
       status={props.payload.status}
-      value={props.payload.value}
       dimmed={selectedUnit != null && selectedUnit !== unitId}
       r={r}
-      fontSize={fontSize}
     />
   )
 }
@@ -67,11 +56,11 @@ export default function UnitTrendScatterChart({ entries, dates }) {
   const [selectedUnit, setSelectedUnit] = useState(null)
   const points = buildTrendPoints(entries, dates, activeGroup)
   const maxAbs = computeMaxAbs(points)
+  const fineTicks = Array.from({ length: maxAbs * 2 + 1 }, (_, i) => i - maxAbs)
 
   const dense = dates.length > 10
   const pointRadius = dense ? 3.5 : 5
-  const labelFontSize = dense ? 7 : 10
-  const chartHeight = 300
+  const chartHeight = 340
 
   return (
     <div className="flex flex-col gap-2">
@@ -115,8 +104,9 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                 dataKey="value"
                 type="number"
                 domain={[-maxAbs, maxAbs]}
-                ticks={buildTicks(maxAbs)}
-                tick={{ fill: '#94a3b8', fontSize: 10 }}
+                ticks={fineTicks}
+                interval={0}
+                tick={{ fill: '#94a3b8', fontSize: 8 }}
                 axisLine={{ stroke: '#334155' }}
                 tickLine={false}
                 width={28}
@@ -145,7 +135,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                   <Scatter
                     key={unit.id}
                     data={unitPoints}
-                    shape={renderShape(UNIT_COLORS[i], selectedUnit, unit.id, pointRadius, labelFontSize)}
+                    shape={renderShape(UNIT_COLORS[i], selectedUnit, unit.id, pointRadius)}
                   />
                 )
               })}
