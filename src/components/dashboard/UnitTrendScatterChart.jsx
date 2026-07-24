@@ -28,6 +28,17 @@ function PointShape({ cx, cy, fill, status, dimmed }) {
   return <circle cx={cx} cy={cy} r={5} fill={fill} opacity={opacity} stroke="#0f172a" strokeWidth={1} />
 }
 
+function ChartTooltip({ active, payload }) {
+  if (!active || !payload || payload.length === 0) return null
+  const p = payload[0].payload
+  return (
+    <div style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12, padding: '6px 10px', color: '#e2e8f0' }}>
+      <div>{p.unitLabel} · {p.date}</div>
+      <div>{p.value} ({p.status === 'normal' ? 'OK' : 'NG'})</div>
+    </div>
+  )
+}
+
 function renderShape(color, selectedUnit, unitId) {
   return (props) => (
     <PointShape
@@ -106,12 +117,7 @@ export default function UnitTrendScatterChart({ entries, dates, group, title }) 
           <ReferenceLine y={0} stroke="#334155" strokeDasharray="3 3" />
           <Tooltip
             cursor={{ strokeDasharray: '3 3' }}
-            contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8, fontSize: 12 }}
-            formatter={(value, _name, props) => [
-              `${value} (${props.payload.status === 'normal' ? 'OK' : 'NG'})`,
-              `${props.payload.unitLabel} · ${props.payload.date}`,
-            ]}
-            labelFormatter={() => ''}
+            content={<ChartTooltip />}
           />
           {UNITS.map((unit, i) => {
             const unitPoints = points.filter(p => p.unit === unit.id)
