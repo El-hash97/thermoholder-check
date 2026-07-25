@@ -19,7 +19,7 @@ export default function Settings({ monthKey, onReset }) {
   }
 
   return (
-    <div className="flex flex-col gap-4 pb-24 mx-3">
+    <div className="flex flex-col gap-4 pb-24 mx-3 lg:mx-6">
       <div className="bg-white rounded-xl p-4 flex flex-col gap-3">
         <h2 className="text-sm font-semibold text-slate-500 uppercase tracking-wider">Reference Standard</h2>
         <div className="flex justify-between items-center">

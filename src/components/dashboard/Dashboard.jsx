@@ -25,7 +25,7 @@ export default function Dashboard({ data }) {
     <div className="flex flex-col gap-3 pb-24">
       <AlertBanner entries={todayEntries} />
 
-      <div className="flex bg-white rounded-xl mx-3 mt-1 p-1 gap-1">
+      <div className="flex bg-white rounded-xl mx-3 lg:mx-6 mt-1 p-1 gap-1">
         {TABS.map(t => (
           <button
             key={t.id}
@@ -38,14 +38,14 @@ export default function Dashboard({ data }) {
         ))}
       </div>
 
-      <div className="mx-3 bg-white rounded-xl p-4">
+      <div className="mx-3 lg:mx-6 bg-white rounded-xl p-4 lg:p-6">
         {tab === 'daily'   && <DailyView entries={entries} date={date} onDateChange={setDate} />}
         {tab === 'weekly'  && <WeeklyView entries={entries} />}
         {tab === 'monthly' && <MonthlyView entries={entries} />}
       </div>
 
       {tab === 'daily' && (
-        <div className="mx-3 bg-white rounded-xl p-4">
+        <div className="mx-3 lg:mx-6 bg-white rounded-xl p-4 lg:p-6">
           <ExportMenu date={date} entries={dayEntries} />
         </div>
       )}

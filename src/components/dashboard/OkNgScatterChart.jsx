@@ -1,6 +1,6 @@
 import {
   ScatterChart, Scatter, XAxis, YAxis, ReferenceArea, ReferenceLine,
-  Tooltip, CartesianGrid,
+  Tooltip, CartesianGrid, ResponsiveContainer,
 } from 'recharts'
 import { UNITS } from '../../constants/units.js'
 import { buildPoints, computeMaxAbs, buildTicks, formatCompactTick } from '../../lib/chartData.js'
@@ -66,10 +66,8 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
   const chartHeight = height ?? 200
   const chartWidth  = compact ? width : Math.max(width ?? 0, UNITS.length * 40)
 
-  const chart = (
+  const scatterChart = (
     <ScatterChart
-      width={chartWidth}
-      height={chartHeight}
       margin={{ top: 10, right: 16, bottom: compact ? 8 : 24, left: 8 }}
     >
       <CartesianGrid stroke="#e2e8f0" />
@@ -124,9 +122,23 @@ export default function OkNgScatterChart({ entries, compact = false, width, heig
     </ScatterChart>
   )
 
+  const chart = compact ? (
+    <div style={{ width: chartWidth, height: chartHeight }}>
+      <ResponsiveContainer width="100%" height="100%">
+        {scatterChart}
+      </ResponsiveContainer>
+    </div>
+  ) : (
+    <div className="overflow-x-auto">
+      <ResponsiveContainer width="100%" height={chartHeight} minWidth={chartWidth}>
+        {scatterChart}
+      </ResponsiveContainer>
+    </div>
+  )
+
   return (
     <div className="flex flex-col gap-2">
-      {compact ? chart : <div className="overflow-x-auto">{chart}</div>}
+      {chart}
       <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-slate-500 px-1">
         <span className="flex items-center gap-1">
           <span className="w-2.5 h-2.5 rounded-sm inline-block" style={{ background: OK_COLOR }} /> OK (±5°C)

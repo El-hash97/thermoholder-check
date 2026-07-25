@@ -36,7 +36,7 @@ export default function App() {
         )}
         {!loading && page === 'dashboard' && <Dashboard data={data} />}
         {!loading && page === 'input' && (
-          <div className="px-3">
+          <div className="px-3 lg:px-6">
             <InputCheckSheet
               data={data}
               onSubmit={(date, g, values) => {

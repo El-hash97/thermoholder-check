@@ -31,6 +31,13 @@ export function computeMaxAbs(points) {
   return Math.max(10, padded)
 }
 
+// Y-axis half-range for the trend chart: fixed at 12 unless data exceeds it,
+// in which case it expands just enough to fit the data with a little headroom.
+export function computeTrendAxisMax(points, floor = 12) {
+  const maxAbs = points.reduce((m, p) => Math.max(m, Math.abs(p.value)), 0)
+  return maxAbs > floor ? Math.ceil(maxAbs) + 1 : floor
+}
+
 export function buildTicks(maxAbs) {
   const ticks = []
   for (let t = -maxAbs; t <= maxAbs; t += 5) ticks.push(t)

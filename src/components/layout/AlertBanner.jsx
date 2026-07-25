@@ -26,7 +26,7 @@ export default function AlertBanner({ entries }) {
   const errorCount = problems.filter(p => p.status === STATUS.ERROR).length
 
   return (
-    <div className="bg-red-50 border border-red-300 mx-3 mt-3 rounded-lg p-3 flex gap-3">
+    <div className="bg-red-50 border border-red-300 mx-3 lg:mx-6 mt-3 rounded-lg p-3 flex gap-3">
       <AlertTriangle className="text-red-500 shrink-0 mt-0.5" size={20} />
       <div>
         <p className="font-semibold text-red-800 text-sm">

@@ -6,10 +6,11 @@ import {
 } from 'recharts'
 import { UNITS, GROUPS } from '../../constants/units.js'
 import { UNIT_COLORS } from '../../lib/unitColors.js'
-import { buildTrendPoints, computeMaxAbs } from '../../lib/chartData.js'
+import { buildTrendPoints, computeTrendAxisMax } from '../../lib/chartData.js'
 
 const OK_COLOR = '#16a34a'
 const NG_COLOR = '#dc2626'
+const OK_NG_BOUNDARY = 5
 
 function PointShape({ cx, cy, fill, status, dimmed, r }) {
   const opacity = dimmed ? 0.15 : 1
@@ -55,7 +56,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
   const [activeGroup, setActiveGroup] = useState('red')
   const [selectedUnit, setSelectedUnit] = useState(null)
   const points = buildTrendPoints(entries, dates, activeGroup)
-  const maxAbs = computeMaxAbs(points)
+  const maxAbs = computeTrendAxisMax(points)
   const fineTicks = Array.from({ length: maxAbs * 2 + 1 }, (_, i) => i - maxAbs)
 
   const dense = dates.length > 10
@@ -87,7 +88,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         <div className="-mx-4">
           <ResponsiveContainer width="100%" height={chartHeight}>
             <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
-              <CartesianGrid stroke="#e2e8f0" />
+              <CartesianGrid stroke="#e2e8f0" horizontal={false} />
               <XAxis
                 dataKey="date"
                 type="category"
@@ -123,7 +124,15 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                 y1={-maxAbs} y2={-5} fill={NG_COLOR} fillOpacity={0.1}
                 label={{ value: 'NG', position: 'insideBottomLeft', fill: '#dc2626', fontSize: 10 }}
               />
-              <ReferenceLine y={0} stroke="#cbd5e1" strokeDasharray="3 3" />
+              {fineTicks.map(t => (
+                <ReferenceLine
+                  key={`grid-${t}`}
+                  y={t}
+                  stroke={Math.abs(t) === OK_NG_BOUNDARY ? '#cbd5e1' : '#000000'}
+                  strokeOpacity={Math.abs(t) === OK_NG_BOUNDARY ? undefined : 0.15}
+                  strokeDasharray={Math.abs(t) === OK_NG_BOUNDARY ? undefined : '3 3'}
+                />
+              ))}
               <Tooltip
                 cursor={{ strokeDasharray: '3 3' }}
                 content={<ChartTooltip />}
