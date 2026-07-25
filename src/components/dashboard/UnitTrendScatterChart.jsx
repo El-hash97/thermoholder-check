@@ -1,7 +1,7 @@
 // src/components/dashboard/UnitTrendScatterChart.jsx
 import { useState } from 'react'
 import {
-  ScatterChart, Scatter, XAxis, YAxis, ReferenceArea, ReferenceLine,
+  ComposedChart, Scatter, Line, XAxis, YAxis, ReferenceArea, ReferenceLine,
   Tooltip, CartesianGrid, ResponsiveContainer,
 } from 'recharts'
 import { UNITS, GROUPS } from '../../constants/units.js'
@@ -58,6 +58,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
   const points = buildTrendPoints(entries, dates, activeGroup)
   const maxAbs = computeTrendAxisMax(points)
   const fineTicks = Array.from({ length: maxAbs * 2 + 1 }, (_, i) => i - maxAbs)
+  const labelTicks = fineTicks.filter(t => t % 2 === 0)
 
   const dense = dates.length > 10
   const pointRadius = dense ? 3.5 : 5
@@ -87,7 +88,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         // -mx-4 offsets Dashboard.jsx's card p-4 so the chart reaches the card edge
         <div className="-mx-4">
           <ResponsiveContainer width="100%" height={chartHeight}>
-            <ScatterChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
+            <ComposedChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
               <CartesianGrid stroke="#e2e8f0" horizontal={false} />
               <XAxis
                 dataKey="date"
@@ -105,7 +106,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                 dataKey="value"
                 type="number"
                 domain={[-maxAbs, maxAbs]}
-                ticks={fineTicks}
+                ticks={labelTicks}
                 interval={0}
                 tick={{ fill: '#64748b', fontSize: 8 }}
                 axisLine={{ stroke: '#cbd5e1' }}
@@ -140,6 +141,25 @@ export default function UnitTrendScatterChart({ entries, dates }) {
               {UNITS.map((unit, i) => {
                 const unitPoints = points.filter(p => p.unit === unit.id)
                 if (unitPoints.length === 0) return null
+                const dimmed = selectedUnit != null && selectedUnit !== unit.id
+                return (
+                  <Line
+                    key={`line-${unit.id}`}
+                    data={unitPoints}
+                    dataKey="value"
+                    stroke={UNIT_COLORS[i]}
+                    strokeOpacity={dimmed ? 0.15 : 1}
+                    strokeWidth={1.5}
+                    dot={false}
+                    activeDot={false}
+                    isAnimationActive={false}
+                    legendType="none"
+                  />
+                )
+              })}
+              {UNITS.map((unit, i) => {
+                const unitPoints = points.filter(p => p.unit === unit.id)
+                if (unitPoints.length === 0) return null
                 return (
                   <Scatter
                     key={unit.id}
@@ -148,7 +168,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
                   />
                 )
               })}
-            </ScatterChart>
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
       )}
