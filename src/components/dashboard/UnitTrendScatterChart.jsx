@@ -63,6 +63,7 @@ export default function UnitTrendScatterChart({ entries, dates }) {
   const dense = dates.length > 10
   const pointRadius = dense ? 3.5 : 5
   const chartHeight = 480
+  const chartMinWidth = dates.length * 32
 
   return (
     <div className="flex flex-col gap-2">
@@ -86,8 +87,8 @@ export default function UnitTrendScatterChart({ entries, dates }) {
         </div>
       ) : (
         // -mx-4 offsets Dashboard.jsx's card p-4 so the chart reaches the card edge
-        <div className="-mx-4">
-          <ResponsiveContainer width="100%" height={chartHeight}>
+        <div className="-mx-4 overflow-x-auto">
+          <ResponsiveContainer width="100%" height={chartHeight} minWidth={chartMinWidth}>
             <ComposedChart margin={{ top: 10, right: 16, bottom: 24, left: 8 }}>
               <CartesianGrid stroke="#e2e8f0" horizontal={false} />
               <XAxis
