@@ -43,7 +43,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
   async function handleShare() {
     setSharing(true)
     try {
-      const canvas = renderShareCardCanvas({ date, entries: [{ group, values }], checker })
+      const canvas = await renderShareCardCanvas({ date, entries: [{ group, values, timestamp: new Date().toISOString() }], checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
       await shareCanvas(canvas)
     } catch (e) {

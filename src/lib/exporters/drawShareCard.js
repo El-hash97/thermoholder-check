@@ -2,6 +2,9 @@ import { UNITS, QUICK_CHECKER_REF, STD_TOLERANCE } from '../../constants/units.j
 import { getStatus, summarize } from '../status.js'
 import { displayDate } from '../dateUtils.js'
 import { buildPoints, computeMaxAbs, buildTicks, formatCompactTick } from '../chartData.js'
+import { HEIGHT as CART_VB_H, WIDTH as CART_VB_W } from '../../components/overview/cartGeometry.js'
+
+const CART_BG = '#111827'
 
 const SCALE = 2
 const CARD_W = 360
@@ -40,6 +43,9 @@ const SUMMARY_CARD_W = (CONTENT_W - SUMMARY_GAP * 3) / 4
 const SUMMARY_CARD_H = 36
 const SUMMARY_MB = 8
 
+const CART_H = Math.round((CONTENT_W * CART_VB_H) / CART_VB_W)
+const CART_MB = 8
+
 const CHART_W = CONTENT_W
 const CHART_H = 160
 const LEGEND_GAP = 8
@@ -65,6 +71,7 @@ const FOOTER_H = 12
 const CONTENT_H =
   HEADER_H + HEADER_MB +
   SUMMARY_CARD_H + SUMMARY_MB +
+  CART_H + CART_MB +
   CHART_BLOCK_H + CHART_MB +
   GRID_H + GRID_MB +
   FOOTER_H
@@ -330,7 +337,27 @@ function drawThGrid(ctx, entries, x0, y0) {
   })
 }
 
-export function renderShareCardCanvas({ date, entries = [], checker = QUICK_CHECKER_REF }) {
+// The Overview cart for one entry: the latest one when both groups are shared.
+async function drawCart(ctx, entries, checker, x, y) {
+  roundRectPath(ctx, x, y, CONTENT_W, CART_H, 6)
+  ctx.save()
+  ctx.fillStyle = CART_BG
+  ctx.fill()
+  ctx.clip()
+  const entry = [...entries].sort((a, b) => String(a.timestamp ?? '').localeCompare(String(b.timestamp ?? ''))).at(-1)
+  if (entry) {
+    const time = entry.timestamp ? new Date(entry.timestamp).toTimeString().slice(0, 5) : '--:--'
+    // Loaded on demand: it pulls in react-dom/server, which only sharing needs.
+    const { cartImage } = await import('../../components/overview/cartMarkup.jsx')
+    const img = await cartImage({ values: entry.values, checker, time, background: CART_BG })
+    ctx.drawImage(img, x, y, CONTENT_W, CART_H)
+    const badge = GROUP_BADGE[entry.group]?.label ?? String(entry.group).toUpperCase()
+    drawText(ctx, `Overview · ${badge}`, x + 8, y + 10, { size: 9, weight: 700, color: '#94a3b8' })
+  }
+  ctx.restore()
+}
+
+export async function renderShareCardCanvas({ date, entries = [], checker = QUICK_CHECKER_REF }) {
   const canvas = document.createElement('canvas')
   canvas.width = CARD_W * SCALE
   canvas.height = CARD_H * SCALE
@@ -352,6 +379,9 @@ export function renderShareCardCanvas({ date, entries = [], checker = QUICK_CHEC
 
   drawSummary(ctx, counts, PAD, y)
   y += SUMMARY_CARD_H + SUMMARY_MB
+
+  await drawCart(ctx, entries, checker, PAD, y)
+  y += CART_H + CART_MB
 
   const { groupsPresent } = drawChart(ctx, entries, PAD, y)
   drawLegend(ctx, groupsPresent, PAD, y + CHART_H + LEGEND_GAP)

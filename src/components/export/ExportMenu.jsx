@@ -12,7 +12,7 @@ export default function ExportMenu({ date, entries, checker }) {
   async function handle() {
     setLoading('image')
     try {
-      const canvas = renderShareCardCanvas({ date, entries, checker })
+      const canvas = await renderShareCardCanvas({ date, entries, checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
       await shareCanvas(canvas)
       setPreviewUrl(null)
