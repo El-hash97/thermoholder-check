@@ -40,8 +40,8 @@ const PARTS = [
   ['Head', 'Measuring electronics, display and controls.'],
   ['Handle', 'Grip under the head.'],
   ['Contact block', 'Square block on the back of the head that tapers in a wedge into the lance.'],
-  ['Lance', 'Straight steel tube that bends down at the end (shortened in the drawing).'],
-  ['Temtip', 'Disposable cardboard probe with a thermocouple, dipped into the molten metal.'],
+  ['Lance', 'Long straight steel tube that bends down at the end (shortened in the drawing).'],
+  ['Temtip', 'Disposable cardboard probe with a thermocouple, pushed over the lance end and dipped into the molten metal.'],
 ]
 
 export function Trend({ points }) {
@@ -249,9 +249,9 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
 
         </div>
 
-        <section className="lg:col-span-2 border-t border-slate-200 p-4 sm:p-5 grid gap-x-8 gap-y-3 lg:grid-cols-[1.35fr_1fr] text-sm text-slate-700">
+        <section className="lg:col-span-2 border-t border-slate-200 p-4 sm:p-5 grid gap-x-8 gap-y-3 lg:grid-cols-[1.35fr_1fr] font-serif text-[15px] leading-relaxed text-slate-700">
           <div className="flex flex-col gap-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">About this thermoholder</h3>
+            <h3 className="font-sans text-xs font-semibold uppercase tracking-wider text-slate-500">About this thermoholder</h3>
             <p>{model.text}</p>
             <p className="text-xs text-slate-500">
               Check method: the quick checker feeds the holder a {checker} °C reference signal; the holder passes when it reads within ±{STD_TOLERANCE} °C.

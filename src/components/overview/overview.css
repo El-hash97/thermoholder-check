@@ -31,24 +31,17 @@
   --anatomy-lit-shade: #121212;
 }
 
-/* Temtip: cardboard probe tube, and its slag-coated immersion end. */
+/* Temtip: off-white cardboard probe tube with dark slag speckles. */
 .th-card {
-  --anatomy-paper: #8c8168;
-  --anatomy-top: #b8ab8a;
-  --anatomy-shade-0: #6f664f;
-  --anatomy-shade-1: #82785e;
-  --anatomy-shade-2: #978c70;
-  --anatomy-shade-3: #ab9f81;
-  --anatomy-hi: #e6dcc2;
-  --anatomy-lo: #5d5543;
-}
-.th-slag {
-  --anatomy-paper: #2c2c2c;
-  --anatomy-top: #4a4a48;
-  --anatomy-shade-0: #262626;
-  --anatomy-shade-1: #2e2e2e;
-  --anatomy-shade-2: #373737;
-  --anatomy-shade-3: #414140;
+  --anatomy-paper: #9d9a92;
+  --anatomy-top: #cfccc4;
+  --anatomy-shade-0: #85827a;
+  --anatomy-shade-1: #9a978f;
+  --anatomy-shade-2: #b0ada5;
+  --anatomy-shade-3: #c4c1b9;
+  --anatomy-hi: #ecebe6;
+  --anatomy-lo: #4a463e;
+  --anatomy-dot: #26231f;
 }
 
 .th-holder { cursor: pointer; outline: none; transition: transform 280ms var(--anatomy-ease); }

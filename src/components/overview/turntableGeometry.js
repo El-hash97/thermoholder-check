@@ -15,14 +15,19 @@ const PLATTER_R = 90
 const TOP = 10
 const PZ = 44 // lance axis height
 const HY = 62 // head plan centre (y)
-const BEND_Y = -28 // the lance runs straight to here, then bends down 30°
-const DOWN = [0, -Math.cos(Math.PI / 6), -Math.sin(Math.PI / 6)]
-const END = [0, BEND_Y - 22, PZ - 22 * Math.tan(Math.PI / 6)] // lance end, where the temtip plugs on
-const CRADLES = [20, -12]
+// The lance runs straight past the turntable's rim, then bends 35° down, so the
+// temtip hangs outside the base.
+const BEND_Y = -100
+const DIP = (35 * Math.PI) / 180
+const DOWN = [0, -Math.cos(DIP), -Math.sin(DIP)]
+const END = [0, BEND_Y + DOWN[1] * 14, PZ + DOWN[2] * 14] // lance end, inside the temtip
+const TEMTIP = 32
+const CRADLES = [20, -55]
 const POLE_R = 1.6
 
 const ring = (r, z) => Array.from({ length: 24 }, (_, i) => [r * Math.cos((i * Math.PI) / 12), r * Math.sin((i * Math.PI) / 12), z])
-const P0 = k.fitProjection([...ring(PLINTH_R, 0), ...ring(PLINTH_R, 64)], WIDTH, HEIGHT, { pad: 18, azimuth: A0 })
+const REACH = -BEND_Y + (14 + TEMTIP) * Math.cos(DIP)
+const P0 = k.fitProjection([...ring(PLINTH_R, 0), ...ring(PLINTH_R, 64), ...ring(REACH, 12), ...ring(REACH, PZ + 4)], WIDTH, HEIGHT, { pad: 14, azimuth: A0 })
 
 const S = (paths, style) => k.solidSvg(paths, style)
 const L = (d, style) => k.lineSvg(d, style)
@@ -86,7 +91,7 @@ export function frameAt(angle, digital) {
   const z0 = PZ - h / 2
   const back = HY - (digital ? 9 : 8)
   const items = []
-  const put = (point, svg) => items.push({ depth: k.depthOf(point, P), svg })
+  const put = (point, svg) => items.push({ point, depth: k.depthOf(point, P), svg })
 
   CRADLES.forEach((yc) => put([0, yc, PZ - POLE_R], cradle(yc, P)))
 
@@ -96,7 +101,7 @@ export function frameAt(angle, digital) {
   const taperEnd = back - 25
   put([0, back - 14, PZ], loft(quad(back - 7, 9, PZ - 6, PZ + 8), quad(taperEnd, 2.4, PZ - 2.4, PZ + 2.4), P))
 
-  // Lance: straight steel tube, then a 30° bend down to the probe end.
+  // Lance: straight steel tube past the rim, then a 35° bend down to the probe end.
   const from = taperEnd + 1
   const route = G.fillet([[0, from, PZ], [0, BEND_Y, PZ], END], 12, 9)
   const pieces = tubePieces(route, POLE_R, P, {
@@ -106,23 +111,34 @@ export function frameAt(angle, digital) {
   })
   pieces.forEach((piece) => put(piece.mid, tubeSvg(piece, { tone: 'hi' })))
 
-  // Coupling and temtip: the disposable immersion probe, a cardboard tube whose end gets dipped.
+  // Temtip: the disposable immersion probe, a thick cardboard tube pushed over the
+  // lance end, flat where the lance enters and rounded at the end that is dipped,
+  // its off-white skin speckled with splashed slag.
   const F = G.frameAlong(END, DOWN)
   const along = (s) => G.add3(END, G.mul3(DOWN, s))
-  put(along(0.8), S(G.disc(-1.2, 2.8, 2.5, F, P), { tone: 'mid', crease: 'none' }))
-  put(along(11), `<g class="th-card">${S(G.disc(2.8, 20, 4.2, F, P), { tone: 'hi', crease: 'none', inner: L(G.arcOf(F, 6, 4.2, P), { tone: 'lo' }) })}</g>`)
-  put(along(26), `<g class="th-slag">${S(G.solidOf([[20, 4.5], [30.5, 4.5, 1], [32.2, 3.4, 1], [33, 0]], F, P), { tone: 'hi', crease: 'none' })}${k.dotsSvg(
-    [22.5, 25.5, 28.5].flatMap((s, i) => G.dotsOf(F, s, 4.5, 9, P, { phase: i * 0.7, fade: [0.04, 0.42] })),
-    { size: 0.55, tone: 'mid' },
-  )}</g>`)
+  const tip = TEMTIP - 3
+  const speckles = Array.from({ length: 11 }, (_, i) => 3 + i * 2.4).flatMap((s, i) =>
+    G.dotsOf(F, s, 4.7, 5 + (i % 3), P, { phase: (i * 2.39) % 6.28, fade: [0.04, 0.42] }),
+  )
+  put(along(tip / 2), `<g class="th-card">${S(G.solidOf([[-3, 4.7], [tip - 2.4, 4.7, 1], [tip - 0.6, 3.6, 1], [tip, 1.4, 1], [tip + 0.15, 0]], F, P), {
+    tone: 'hi',
+    crease: 'none',
+    inner: L(G.arcOf(F, -1.8, 4.7, P), { tone: 'lo' }),
+  })}${k.dotsSvg(speckles, { size: 0.42, tone: 'hi' })}</g>`)
+
+  // Parts hanging past the rim on the far side are hidden behind the turntable.
+  const view = k.towardViewer(P)
+  const behind = (p) => Math.hypot(p[0], p[1]) > PLATTER_R - 2 && p[0] * view[0] + p[1] * view[1] < 0
   items.sort((a, b) => a.depth - b.depth)
-  const rest = items.map((item) => item.svg).join('')
+  const join = (list) => list.map((item) => item.svg).join('')
+  const hidden = join(items.filter((item) => behind(item.point)))
+  const rest = join(items.filter((item) => !behind(item.point)))
 
   const head = handleSvg(0, HY, z0, P) + (digital ? digitalSvg : manualSvg)(0, HY, z0, P)
   // Seen from the display side the whole lance is behind the head; from the back it is all in front.
-  const frontOn = k.towardViewer(P)[1] > 0
+  const frontOn = view[1] > 0
   return {
-    before: base(P) + (frontOn ? rest : '') + head,
+    before: hidden + base(P) + (frontOn ? rest : '') + head,
     after: frontOn ? '' : rest,
     face: faceMatrix(0, HY, z0, digital, P),
     faceOn: frontOn,
