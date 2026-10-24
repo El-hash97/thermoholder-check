@@ -40,13 +40,13 @@ export default function Dashboard({ data }) {
 
       <div className="mx-3 lg:mx-6 bg-white rounded-xl p-4 lg:p-6">
         {tab === 'daily'   && <DailyView entries={entries} date={date} onDateChange={setDate} />}
-        {tab === 'weekly'  && <WeeklyView entries={entries} />}
-        {tab === 'monthly' && <MonthlyView entries={entries} />}
+        {tab === 'weekly'  && <WeeklyView entries={entries} checker={data?.quickchecker_ref} />}
+        {tab === 'monthly' && <MonthlyView entries={entries} checker={data?.quickchecker_ref} />}
       </div>
 
       {tab === 'daily' && (
         <div className="mx-3 lg:mx-6 bg-white rounded-xl p-4 lg:p-6">
-          <ExportMenu date={date} entries={dayEntries} />
+          <ExportMenu date={date} entries={dayEntries} checker={data?.quickchecker_ref} />
         </div>
       )}
     </div>

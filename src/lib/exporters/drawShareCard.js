@@ -330,7 +330,7 @@ function drawThGrid(ctx, entries, x0, y0) {
   })
 }
 
-export function renderShareCardCanvas({ date, entries = [] }) {
+export function renderShareCardCanvas({ date, entries = [], checker = QUICK_CHECKER_REF }) {
   const canvas = document.createElement('canvas')
   canvas.width = CARD_W * SCALE
   canvas.height = CARD_H * SCALE
@@ -360,7 +360,7 @@ export function renderShareCardCanvas({ date, entries = [] }) {
   drawThGrid(ctx, entries, PAD, y)
   y += GRID_H + GRID_MB
 
-  drawText(ctx, `Quick Checker: ${QUICK_CHECKER_REF}°C | Standar: ±${STD_TOLERANCE}°C`, CARD_W / 2, y + FOOTER_H / 2, {
+  drawText(ctx, `Quick Checker: ${checker}°C | Standar: ±${STD_TOLERANCE}°C`, CARD_W / 2, y + FOOTER_H / 2, {
     size: 10, color: '#64748b', align: 'center',
   })
 

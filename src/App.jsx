@@ -14,7 +14,7 @@ export default function App() {
   const [group, setGroup] = useState('red')
 
   const monthKey = getMonthKey()
-  const { data, loading, submitEntry, reset, getTodayEntries } = useThermoData(monthKey)
+  const { data, loading, submitEntry, reset, saveQuickChecker, getTodayEntries } = useThermoData(monthKey)
 
   const todayEntries = getTodayEntries()
   const alertCount = (() => {
@@ -49,7 +49,7 @@ export default function App() {
           </div>
         )}
         {!loading && page === 'settings' && (
-          <Settings monthKey={monthKey} onReset={reset} />
+          <Settings monthKey={monthKey} checker={data.quickchecker_ref} onSaveChecker={saveQuickChecker} onReset={reset} />
         )}
       </main>
       <BottomNav active={page} onChange={setPage} alertCount={alertCount} />

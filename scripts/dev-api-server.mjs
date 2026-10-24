@@ -9,6 +9,7 @@ const handlers = {
   entry: (await import('../api/entry.js')).default,
   reset: (await import('../api/reset.js')).default,
   months: (await import('../api/months.js')).default,
+  settings: (await import('../api/settings.js')).default,
 }
 
 function buildRes(res) {

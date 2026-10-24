@@ -103,6 +103,9 @@
 .th-screw { fill: var(--anatomy-mid); }
 .th-screw-dark { fill: #2a2a2a; }
 
+html.th-no-scrollbar { scrollbar-width: none; }
+html.th-no-scrollbar::-webkit-scrollbar { display: none; }
+
 @media (prefers-reduced-motion: reduce) {
   .th-holder { transition: none; }
 }

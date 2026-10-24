@@ -41,7 +41,7 @@ async function loadLogoDataUrl() {
   }
 }
 
-function drawHeader(doc, logo, periodLabel) {
+function drawHeader(doc, logo, periodLabel, checker) {
   const pageWidth = doc.internal.pageSize.getWidth()
   const leftX = 14
   if (logo) doc.addImage(logo, 'PNG', leftX, 8, 16, 16)
@@ -56,7 +56,7 @@ function drawHeader(doc, logo, periodLabel) {
   doc.setTextColor(71, 85, 105)
   doc.text(periodLabel, pageWidth - leftX, 15, { align: 'right' })
 
-  doc.text(`Quick Checker Ref: ${QUICK_CHECKER_REF}°C | Standar: ±${STD_TOLERANCE}°C`, pageWidth - leftX, 21, { align: 'right' })
+  doc.text(`Quick Checker Ref: ${checker}°C | Standar: ±${STD_TOLERANCE}°C`, pageWidth - leftX, 21, { align: 'right' })
 }
 
 const TYPE_ABBR = { Manual: 'Man', Digital: 'Dig' }
@@ -116,23 +116,23 @@ function drawTable(doc, dates, monthLabel, entries, { compact = false } = {}) {
   })
 }
 
-export async function exportWeeklyPDF(entries, weekDates) {
+export async function exportWeeklyPDF(entries, weekDates, checker = QUICK_CHECKER_REF) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
   const logo = await loadLogoDataUrl()
 
   const periodLabel = `Laporan Mingguan · ${displayDate(weekDates[0])} – ${displayDate(weekDates[6])}`
-  drawHeader(doc, logo, periodLabel)
+  drawHeader(doc, logo, periodLabel, checker)
   drawTable(doc, weekDates, monthLabelForDates(weekDates), entries)
 
   doc.save(`thermoholder_weekly_${weekDates[0]}_${weekDates[6]}.pdf`)
 }
 
-export async function exportMonthlyPDF(entries, days, monthKey) {
+export async function exportMonthlyPDF(entries, days, monthKey, checker = QUICK_CHECKER_REF) {
   const doc = new jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' })
   const logo = await loadLogoDataUrl()
 
   const periodLabel = `Laporan Bulanan · ${formatMonthLabel(monthKey)}`
-  drawHeader(doc, logo, periodLabel)
+  drawHeader(doc, logo, periodLabel, checker)
   drawTable(doc, days, formatMonthLabel(monthKey), entries, { compact: true })
 
   doc.save(`thermoholder_monthly_${monthKey}.pdf`)

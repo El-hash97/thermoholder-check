@@ -23,6 +23,17 @@ export async function resetMonth(monthKey) {
   if (!res.ok) throw new Error('Failed to reset month')
 }
 
+export async function saveSettings(monthKey, quickcheckerRef) {
+  const res = await fetch('/api/settings', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ month: monthKey, quickchecker_ref: quickcheckerRef }),
+  })
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(body.error || 'Failed to save settings')
+  return body
+}
+
 export async function getStoredMonths() {
   const res = await fetch('/api/months')
   if (!res.ok) throw new Error('Failed to load months')

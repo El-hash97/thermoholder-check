@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react'
-import { getMonthData, saveEntry, resetMonth, buildEntryId } from '../lib/storage.js'
+import { getMonthData, saveEntry, resetMonth, saveSettings, buildEntryId } from '../lib/storage.js'
 import { formatDate } from '../lib/dateUtils.js'
 
 function emptyMonth(monthKey) {
@@ -42,10 +42,15 @@ export function useThermoData(monthKey) {
     await refresh()
   }, [monthKey, refresh])
 
+  const saveQuickChecker = useCallback(async (value) => {
+    await saveSettings(monthKey, value)
+    await refresh()
+  }, [monthKey, refresh])
+
   const getTodayEntries = useCallback(() => {
     const today = formatDate()
     return data.entries.filter(e => e.date === today)
   }, [data])
 
-  return { data, loading, error, submitEntry, reset, getTodayEntries }
+  return { data, loading, error, submitEntry, reset, saveQuickChecker, getTodayEntries }
 }

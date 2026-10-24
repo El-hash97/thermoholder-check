@@ -13,7 +13,7 @@ const BG = {
   none:   'bg-slate-300',
 }
 
-export default function MonthlyView({ entries }) {
+export default function MonthlyView({ entries, checker }) {
   const now = new Date()
   const [year,  setYear]  = useState(now.getFullYear())
   const [month, setMonth] = useState(now.getMonth() + 1)
@@ -48,7 +48,7 @@ export default function MonthlyView({ entries }) {
       </div>
 
       <button
-        onClick={() => exportMonthlyPDF(entries, days, monthKey)}
+        onClick={() => exportMonthlyPDF(entries, days, monthKey, checker)}
         title="Export to PDF"
         className="fixed bottom-20 right-4 w-13 h-13 p-3 rounded-full bg-green-600 hover:bg-green-500 active:bg-green-700 shadow-lg z-10 touch-target flex items-center justify-center"
       >

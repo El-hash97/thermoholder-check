@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import './iso/iso.css'
 import './overview.css'
 import { GROUPS } from '../../constants/units.js'
@@ -59,6 +59,12 @@ export default function OverviewView({ data }) {
   const [hover, setHover] = useState(null)
   const [selected, setSelected] = useState('TH_Master')
   const [open, setOpen] = useState(false)
+
+  // The page still scrolls on short screens; Overview just shows no scrollbar.
+  useEffect(() => {
+    document.documentElement.classList.add('th-no-scrollbar')
+    return () => document.documentElement.classList.remove('th-no-scrollbar')
+  }, [])
 
   const entry = entries.find(e => e.date === date && e.group === group)
   const readings = Object.fromEntries(ALL.map(h => [h.id, displayValue(entry?.values?.[h.id], ref)]))
@@ -137,9 +143,9 @@ export default function OverviewView({ data }) {
               {focus.label} · {focusReading.text}{/^\d+$/.test(focusReading.text) ? ' °C' : ''}
             </span>
           </div>
-          <div className="overflow-x-auto -mx-3 px-3">
+          <div>
             <svg
-              className="iso-svg min-w-[560px]"
+              className="iso-svg"
               viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
               role="group"
               aria-label={`QC cart with 16 thermoholders reading the quick checker at ${ref} °C${entry ? ` for ${displayDate(date)}, ${group} group` : ', no entry selected'}.`}

@@ -3,7 +3,7 @@ import { Share2, X } from 'lucide-react'
 import { shareCanvas } from '../../lib/exporters/imageExport.js'
 import { renderShareCardCanvas } from '../../lib/exporters/drawShareCard.js'
 
-export default function ExportMenu({ date, entries }) {
+export default function ExportMenu({ date, entries, checker }) {
   const [loading, setLoading] = useState(null)
   const [previewUrl, setPreviewUrl] = useState(null)
 
@@ -12,7 +12,7 @@ export default function ExportMenu({ date, entries }) {
   async function handle() {
     setLoading('image')
     try {
-      const canvas = renderShareCardCanvas({ date, entries })
+      const canvas = renderShareCardCanvas({ date, entries, checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
       await shareCanvas(canvas)
       setPreviewUrl(null)

@@ -25,7 +25,7 @@ function groupStatus(entries, unitId, date, group) {
   return 'none'
 }
 
-export default function WeeklyView({ entries }) {
+export default function WeeklyView({ entries, checker }) {
   const [refDate, setRefDate] = useState(formatDate())
   const weekDates = getWeekDates(refDate)
 
@@ -54,7 +54,7 @@ export default function WeeklyView({ entries }) {
       </div>
 
       <button
-        onClick={() => exportWeeklyPDF(entries, weekDates)}
+        onClick={() => exportWeeklyPDF(entries, weekDates, checker)}
         title="Export to PDF"
         className="fixed bottom-20 right-4 w-13 h-13 p-3 rounded-full bg-green-600 hover:bg-green-500 active:bg-green-700 shadow-lg z-10 touch-target flex items-center justify-center"
       >
