@@ -1,0 +1,78 @@
+/* Overview figure: thermoholder face colours and the holder interaction. */
+.th-fig {
+  --th-red: #ff3b30;
+  --th-amber: #ff9f0a;
+  --th-green: #30d158;
+  --th-lcd: #dff4ff;
+}
+
+/* Brushed stainless case of the manual holders: a lighter token set than the cart. */
+.th-steel {
+  --anatomy-paper: #262626;
+  --anatomy-top: #3a3a39;
+  --anatomy-shade-0: #222222;
+  --anatomy-shade-1: #282828;
+  --anatomy-shade-2: #2e2e2e;
+  --anatomy-shade-3: #343434;
+  --anatomy-lit-top: #4a4a48;
+  --anatomy-lit-shade: #3a3a39;
+  --anatomy-face: #3a3a39;
+}
+
+/* Black rubber case of the digital holders: a darker token set for its solids. */
+.th-rubber {
+  --anatomy-paper: #0a0a0a;
+  --anatomy-top: #141414;
+  --anatomy-shade-0: #070707;
+  --anatomy-shade-1: #090909;
+  --anatomy-shade-2: #0b0b0b;
+  --anatomy-shade-3: #0e0e0e;
+  --anatomy-lit-top: #1c1c1c;
+  --anatomy-lit-shade: #121212;
+}
+
+.th-holder { cursor: pointer; outline: none; transition: transform 280ms var(--anatomy-ease); }
+.th-holder:focus-visible .iso-edge { stroke: var(--anatomy-lit); }
+
+.th-face text { font-family: ui-sans-serif, system-ui, "Segoe UI", Arial, sans-serif; text-anchor: middle; }
+.th-brand { fill: var(--anatomy-mid); font-weight: 700; letter-spacing: -0.02em; }
+.th-brand-end { text-anchor: end !important; fill: #c9c9c9; }
+.th-maker { fill: var(--anatomy-mid); font-style: italic; font-weight: 700; }
+
+.th-bezel { fill: #050505; stroke: var(--anatomy-lo); stroke-width: 0.25; }
+.th-window-red { fill: #1b0504; }
+.th-window-lcd { fill: #070d16; }
+
+.th-seg-off { fill: #2a0806; }
+.th-seg-on.th-seg-red { fill: var(--th-red); filter: drop-shadow(0 0 0.5px var(--th-red)); }
+.th-seg-on.th-seg-amber { fill: var(--th-amber); filter: drop-shadow(0 0 0.5px var(--th-amber)); }
+.th-seg-on.th-seg-dim { fill: #6e1a14; }
+
+.th-lcd-digits { font-family: ui-monospace, "SF Mono", Consolas, monospace !important; font-weight: 500; letter-spacing: -0.02em; }
+.th-lcd-small { text-anchor: end !important; font-family: ui-monospace, Consolas, monospace !important; }
+.th-lcd-normal, .th-lcd-oos { fill: var(--th-lcd); }
+.th-lcd-error { fill: var(--th-amber); }
+.th-lcd-none { fill: #36506a; }
+.th-lcd-line { fill: none; stroke: var(--th-lcd); stroke-width: 0.2; opacity: 0.7; }
+
+.th-led { fill: #1a1a1a; stroke: var(--anatomy-lo); stroke-width: 0.2; }
+.th-led-green { fill: var(--th-green); filter: drop-shadow(0 0 0.7px var(--th-green)); }
+.th-led-amber { fill: var(--th-amber); filter: drop-shadow(0 0 0.7px var(--th-amber)); }
+.th-led-red { fill: var(--th-red); filter: drop-shadow(0 0 0.7px var(--th-red)); }
+
+.th-label { fill: #ecebe6; }
+.th-label-rule { fill: none; stroke: #1a1a1a; stroke-width: 0.2; }
+.th-label-text { fill: #111; font-family: ui-serif, Georgia, serif !important; }
+
+.th-button-red { fill: #a1201c; stroke: #3b0a08; stroke-width: 0.2; }
+.th-key { fill: #1d1f22; stroke: #000; stroke-width: 0.2; }
+.th-key-ok { fill: #2f7d3a; stroke: #0f2a13; stroke-width: 0.2; }
+.th-key-glyph { fill: #e8e8e8; }
+.th-key-mark { fill: none; stroke: #f2f2f2; stroke-width: 0.45; stroke-linecap: round; stroke-linejoin: round; }
+
+.th-screw { fill: var(--anatomy-mid); }
+.th-screw-dark { fill: #2a2a2a; }
+
+@media (prefers-reduced-motion: reduce) {
+  .th-holder { transition: none; }
+}

@@ -1,6 +1,7 @@
-import { LayoutDashboard, ClipboardEdit, Settings } from 'lucide-react'
+import { Box, LayoutDashboard, ClipboardEdit, Settings } from 'lucide-react'
 
 const NAV = [
+  { id: 'overview',  label: 'Overview',  Icon: Box },
   { id: 'dashboard', label: 'Dashboard', Icon: LayoutDashboard },
   { id: 'input',     label: 'Input',     Icon: ClipboardEdit },
   { id: 'settings',  label: 'Settings',  Icon: Settings },
