@@ -7,15 +7,9 @@ import { parseValue } from '../../lib/chartData.js'
 import { displayDate } from '../../lib/dateUtils.js'
 import { WIDTH, HEIGHT, LAYERS, BACK_HOLDERS, FRONT_HOLDERS } from './cartGeometry.js'
 import { ManualFace, DigitalFace } from './HolderFace.jsx'
+import HolderDetail, { Trend, STATUS_TEXT, STATUS_CLASS } from './HolderDetail.jsx'
 
 const ALL = [...BACK_HOLDERS, ...FRONT_HOLDERS]
-const STATUS_TEXT = { normal: 'Normal', oos: 'Out of Std', error: 'Error', none: 'Not Available' }
-const STATUS_CLASS = {
-  normal: 'bg-green-50 border-green-300 text-green-700',
-  oos: 'bg-red-50 border-red-300 text-red-700',
-  error: 'bg-orange-50 border-orange-300 text-orange-600',
-  none: 'bg-slate-100 border-slate-300 text-slate-500',
-}
 
 const html = (markup) => ({ __html: markup })
 const timeOf = (iso) => (iso ? new Date(iso).toTimeString().slice(0, 5) : '--:--')
@@ -50,24 +44,6 @@ function Holder({ holder, reading, time, lifted, selected, onHover, onSelect }) 
   )
 }
 
-function Trend({ points }) {
-  if (points.length < 2) return <p className="text-xs text-slate-400">Not enough data for a trend.</p>
-  const W = 220, H = 64, PAD = 6
-  const max = Math.max(8, ...points.map(p => Math.abs(p.value)))
-  const x = (i) => PAD + (i * (W - PAD * 2)) / (points.length - 1)
-  const y = (v) => H / 2 - (v / max) * (H / 2 - PAD)
-  return (
-    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-16" role="img" aria-label="Deviation over the last checks">
-      <rect x={PAD} y={y(5)} width={W - PAD * 2} height={y(-5) - y(5)} className="fill-green-100" />
-      <line x1={PAD} x2={W - PAD} y1={y(0)} y2={y(0)} className="stroke-slate-300" strokeDasharray="3 3" />
-      <polyline points={points.map((p, i) => `${x(i)},${y(p.value)}`).join(' ')} className="fill-none stroke-slate-500" strokeWidth="1.5" />
-      {points.map((p, i) => (
-        <circle key={p.date} cx={x(i)} cy={y(p.value)} r="2.6" className={Math.abs(p.value) > 5 ? 'fill-red-500' : 'fill-green-600'} />
-      ))}
-    </svg>
-  )
-}
-
 export default function OverviewView({ data }) {
   const entries = data?.entries ?? []
   const ref = data?.quickchecker_ref ?? 1500
@@ -82,6 +58,7 @@ export default function OverviewView({ data }) {
   const group = pick?.group ?? latest?.group ?? 'red'
   const [hover, setHover] = useState(null)
   const [selected, setSelected] = useState('TH_Master')
+  const [open, setOpen] = useState(false)
 
   const entry = entries.find(e => e.date === date && e.group === group)
   const readings = Object.fromEntries(ALL.map(h => [h.id, displayValue(entry?.values?.[h.id], ref)]))
@@ -90,7 +67,7 @@ export default function OverviewView({ data }) {
   const counts = { normal: 0, oos: 0, error: 0, none: 0 }
   ALL.forEach(h => counts[readings[h.id].status]++)
 
-  const focus = ALL.find(h => h.id === (hover ?? selected))
+  const focus = ALL.find(h => h.id === (open ? selected : hover ?? selected))
   const focusReading = readings[focus.id]
   const raw = entry?.values?.[focus.id] ?? ''
 
@@ -109,7 +86,10 @@ export default function OverviewView({ data }) {
     lifted: h.id === hover || h.id === selected,
     selected: h.id === selected,
     onHover: setHover,
-    onSelect: setSelected,
+    onSelect: (id) => {
+      setSelected(id)
+      setOpen(true)
+    },
   })
 
   return (
@@ -152,7 +132,7 @@ export default function OverviewView({ data }) {
           <div className="iso-plate-corners" aria-hidden="true">
             <span className="iso-plate-corner" data-corner="fig">Fig 1</span>
             <span className="iso-plate-corner" data-corner="title">QC cart · 16 thermoholders</span>
-            <span className="iso-plate-corner" data-corner="hint">Tap a holder</span>
+            <span className="iso-plate-corner" data-corner="hint">Tap a holder for detail</span>
             <span className="iso-plate-corner" data-corner="readout">
               {focus.label} · {focusReading.text}{/^\d+$/.test(focusReading.text) ? ' °C' : ''}
             </span>
@@ -203,6 +183,21 @@ export default function OverviewView({ data }) {
           <Trend points={trend} />
         </div>
       </div>
+
+      {open && (
+        <HolderDetail
+          holder={focus}
+          reading={focusReading}
+          raw={raw}
+          entry={entry}
+          date={date}
+          group={group}
+          checker={ref}
+          time={time}
+          trend={trend}
+          onClose={() => setOpen(false)}
+        />
+      )}
     </div>
   )
 }
