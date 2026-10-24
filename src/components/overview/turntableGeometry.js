@@ -21,7 +21,7 @@ const BEND_Y = -100
 const DIP = (35 * Math.PI) / 180
 const DOWN = [0, -Math.cos(DIP), -Math.sin(DIP)]
 const END = [0, BEND_Y + DOWN[1] * 14, PZ + DOWN[2] * 14] // lance end, inside the temtip
-const TEMTIP = 32
+const TEMTIP = 41 // temtip length past the lance end, including the 3 units over the lance
 const CRADLES = [20, -55]
 const POLE_R = 1.6
 
@@ -111,20 +111,18 @@ export function frameAt(angle, digital) {
   })
   pieces.forEach((piece) => put(piece.mid, tubeSvg(piece, { tone: 'hi' })))
 
-  // Temtip: the disposable immersion probe, a thick cardboard tube pushed over the
-  // lance end, flat where the lance enters and rounded at the end that is dipped,
-  // its off-white skin speckled with splashed slag.
+  // Temtip: the disposable immersion probe pushed over the lance end. A slim kraft
+  // cardboard tube with a brass band, then the thicker white sensor body, then a
+  // short slim cap at the end that is dipped.
   const F = G.frameAlong(END, DOWN)
   const along = (s) => G.add3(END, G.mul3(DOWN, s))
-  const tip = TEMTIP - 3
-  const speckles = Array.from({ length: 11 }, (_, i) => 3 + i * 2.4).flatMap((s, i) =>
-    G.dotsOf(F, s, 4.7, 5 + (i % 3), P, { phase: (i * 2.39) % 6.28, fade: [0.04, 0.42] }),
-  )
-  put(along(tip / 2), `<g class="th-card">${S(G.solidOf([[-3, 4.7], [tip - 2.4, 4.7, 1], [tip - 0.6, 3.6, 1], [tip, 1.4, 1], [tip + 0.15, 0]], F, P), {
-    tone: 'hi',
-    crease: 'none',
-    inner: L(G.arcOf(F, -1.8, 4.7, P), { tone: 'lo' }),
-  })}${k.dotsSvg(speckles, { size: 0.42, tone: 'hi' })}</g>`)
+  const T = { tube: [-3, 17], band: [15, 16.4], body: [17, 32], cap: [32, TEMTIP - 3] }
+  const part = (cls, profile, at, style = {}) =>
+    put(along(at), `<g class="${cls}">${S(G.solidOf(profile, F, P), { tone: 'hi', crease: 'none', ...style })}</g>`)
+  part('th-kraft', [[T.tube[0], 3], [T.tube[1], 3]], (T.tube[0] + T.tube[1]) / 2, { inner: L(G.arcOf(F, 1, 3, P), { tone: 'lo' }) })
+  part('th-brass', [[T.band[0], 3.35], [T.band[1], 3.35]], (T.band[0] + T.band[1]) / 2)
+  part('th-card', [[T.body[0], 3.6], [T.body[0] + 0.8, 4.6, 1], [T.body[1] - 0.8, 4.6, 1], [T.body[1], 3.8]], (T.body[0] + T.body[1]) / 2)
+  part('th-kraft', [[T.cap[0], 2.5], [T.cap[1] - 1.2, 2.5, 1], [T.cap[1] - 0.3, 1.8, 1], [T.cap[1], 0]], (T.cap[0] + T.cap[1]) / 2)
 
   // Parts hanging past the rim on the far side are hidden behind the turntable.
   const view = k.towardViewer(P)

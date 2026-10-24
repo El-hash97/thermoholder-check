@@ -31,17 +31,34 @@
   --anatomy-lit-shade: #121212;
 }
 
-/* Temtip: off-white cardboard probe tube with dark slag speckles. */
+/* Temtip: kraft cardboard tube and cap, brass band, white sensor body. */
+.th-kraft {
+  --anatomy-paper: #8f6c4a;
+  --anatomy-top: #c49b70;
+  --anatomy-shade-0: #6f5338;
+  --anatomy-shade-1: #826143;
+  --anatomy-shade-2: #9a7552;
+  --anatomy-shade-3: #b08863;
+  --anatomy-hi: #e7cfb2;
+  --anatomy-lo: #5a4330;
+}
+.th-brass {
+  --anatomy-paper: #8a7232;
+  --anatomy-top: #c9a94e;
+  --anatomy-shade-0: #6c5826;
+  --anatomy-shade-1: #806a2e;
+  --anatomy-shade-2: #977d37;
+  --anatomy-shade-3: #ad9040;
+  --anatomy-hi: #ecd78f;
+}
 .th-card {
-  --anatomy-paper: #9d9a92;
-  --anatomy-top: #cfccc4;
-  --anatomy-shade-0: #85827a;
-  --anatomy-shade-1: #9a978f;
-  --anatomy-shade-2: #b0ada5;
-  --anatomy-shade-3: #c4c1b9;
-  --anatomy-hi: #ecebe6;
-  --anatomy-lo: #4a463e;
-  --anatomy-dot: #26231f;
+  --anatomy-paper: #a9a7a2;
+  --anatomy-top: #e2e0db;
+  --anatomy-shade-0: #93918b;
+  --anatomy-shade-1: #aaa8a2;
+  --anatomy-shade-2: #c1bfb9;
+  --anatomy-shade-3: #d5d3ce;
+  --anatomy-hi: #f6f5f2;
 }
 
 .th-holder { cursor: pointer; outline: none; transition: transform 280ms var(--anatomy-ease); }
