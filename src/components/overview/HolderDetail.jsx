@@ -16,29 +16,32 @@ export const STATUS_CLASS = {
 const MODEL = {
   Manual: {
     name: 'Manual thermoholder',
+    series: 'Heraeus Electro-Nite Digilance',
     housing: 'Stainless steel case',
     display: 'Red 7-segment LED display',
     text:
-      'A Heraeus Electro-Nite manual thermoholder: the hand-held head used for spot temperature readings of molten metal. ' +
-      'A disposable immersion probe is pushed onto the contact block at the end of the steel lance. When the operator dips it into the bath, ' +
-      'the head reads the thermocouple in the probe and holds the result on its red 7-segment display. A column of status LEDs and a red push button sit beside the display.',
+      'A Heraeus Electro-Nite Digilance thermoholder: the hand-held instrument used for spot temperature readings of molten metal. ' +
+      'The operator fits a disposable temtip on the bent end of the steel lance and dips it into the bath. The thermocouple inside the temtip sends its signal ' +
+      'up the lance to the head, which holds the reading on its red 7-segment display. A column of status LEDs and a red push button sit beside the display.',
   },
   Digital: {
     name: 'Digital thermoholder',
+    series: 'Heraeus Electro-Nite',
     housing: 'Black rubber housing',
     display: 'Backlit LCD with time stamp',
     text:
-      'A Heraeus Electro-Nite digital thermoholder in a shock-absorbing rubber housing. It does the same job as the manual model, ' +
-      'reading the thermocouple in a disposable probe on the end of the lance, but shows the temperature on a backlit LCD together with the time of the reading. ' +
-      'It is operated with up/down, confirm and cancel keys.',
+      'A Heraeus Electro-Nite digital thermoholder in a shock-absorbing rubber housing. It does the same job as the manual model: ' +
+      'the thermocouple in a disposable temtip on the end of the lance is dipped into the molten metal, and the head shows the temperature on a backlit LCD ' +
+      'together with the time of the reading. It is operated with up/down, confirm and cancel keys.',
   },
 }
 
 const PARTS = [
   ['Head', 'Measuring electronics, display and controls.'],
-  ['Handle', 'Grip under the head; the operator holds the lance here.'],
-  ['Lance', 'Steel tube carrying the signal to the probe end (shortened in the drawing).'],
-  ['Contact block', 'Probe end: the disposable immersion probe plugs on here.'],
+  ['Handle', 'Grip under the head.'],
+  ['Contact block', 'Square block on the back of the head that tapers in a wedge into the lance.'],
+  ['Lance', 'Straight steel tube that bends down at the end (shortened in the drawing).'],
+  ['Temtip', 'Disposable cardboard probe with a thermocouple, dipped into the molten metal.'],
 ]
 
 export function Trend({ points }) {
@@ -164,11 +167,11 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
         role="dialog"
         aria-modal="true"
         aria-label={`${holder.label} detail`}
-        className="bg-white rounded-2xl w-full max-w-5xl max-h-[94vh] overflow-y-auto grid lg:grid-cols-[1.35fr_1fr]"
+        className="bg-white rounded-2xl w-full max-w-5xl max-h-[94vh] overflow-y-auto overflow-x-hidden grid lg:grid-cols-[1.35fr_1fr] outline-none [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         onClick={e => e.stopPropagation()}
       >
-        <figure className="iso th-fig m-0 relative lg:sticky lg:top-0 self-start" data-theme="dark">
-          <div className="iso-plate rounded-t-2xl lg:rounded-l-2xl lg:rounded-tr-none overflow-hidden" style={{ padding: '44px 8px 56px' }}>
+        <figure className="iso th-fig m-0 relative" data-theme="dark">
+          <div className="iso-plate rounded-t-2xl lg:rounded-tr-none overflow-hidden h-full flex flex-col justify-center" style={{ padding: '44px 8px 56px' }}>
             <div className="iso-plate-corners" aria-hidden="true">
               <span className="iso-plate-corner" data-corner="fig">Fig 2</span>
               <span className="iso-plate-corner" data-corner="title">{holder.label} · {holder.type}</span>
@@ -211,7 +214,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
           <div className="flex items-start gap-3">
             <div>
               <h2 className="text-xl font-bold text-slate-900">{holder.label}</h2>
-              <p className="text-sm text-slate-500">{model.name} · Heraeus Electro-Nite</p>
+              <p className="text-sm text-slate-500">{model.name} · {model.series}</p>
             </div>
             <span className="ml-auto text-xs font-semibold rounded-full px-2.5 py-1 bg-slate-800 text-white">{holder.type}</span>
             <button onClick={onClose} aria-label="Close" className="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500">
@@ -244,22 +247,25 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
             <Trend points={trend} />
           </section>
 
-          <section className="text-sm text-slate-700 flex flex-col gap-2">
+        </div>
+
+        <section className="lg:col-span-2 border-t border-slate-200 p-4 sm:p-5 grid gap-x-8 gap-y-3 lg:grid-cols-[1.35fr_1fr] text-sm text-slate-700">
+          <div className="flex flex-col gap-2">
             <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-500">About this thermoholder</h3>
             <p>{model.text}</p>
-            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
-              <dt className="text-slate-500">Type</dt><dd>{holder.type}</dd>
-              <dt className="text-slate-500">Housing</dt><dd>{model.housing}</dd>
-              <dt className="text-slate-500">Display</dt><dd>{model.display}</dd>
-              {PARTS.map(([name, text]) => (
-                <div key={name} className="contents"><dt className="text-slate-500">{name}</dt><dd>{text}</dd></div>
-              ))}
-            </dl>
             <p className="text-xs text-slate-500">
               Check method: the quick checker feeds the holder a {checker} °C reference signal; the holder passes when it reads within ±{STD_TOLERANCE} °C.
             </p>
-          </section>
-        </div>
+          </div>
+          <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 content-start">
+            <dt className="text-slate-500">Type</dt><dd>{holder.type}</dd>
+            <dt className="text-slate-500">Housing</dt><dd>{model.housing}</dd>
+            <dt className="text-slate-500">Display</dt><dd>{model.display}</dd>
+            {PARTS.map(([name, text]) => (
+              <div key={name} className="contents"><dt className="text-slate-500">{name}</dt><dd>{text}</dd></div>
+            ))}
+          </dl>
+        </section>
       </div>
     </div>
   )

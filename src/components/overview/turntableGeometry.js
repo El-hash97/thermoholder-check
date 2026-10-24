@@ -15,8 +15,10 @@ const PLATTER_R = 90
 const TOP = 10
 const PZ = 44 // lance axis height
 const HY = 62 // head plan centre (y)
-const TIP_Y = -70 // where the lance meets the contact block
-const CRADLES = [20, -40]
+const BEND_Y = -28 // the lance runs straight to here, then bends down 30°
+const DOWN = [0, -Math.cos(Math.PI / 6), -Math.sin(Math.PI / 6)]
+const END = [0, BEND_Y - 22, PZ - 22 * Math.tan(Math.PI / 6)] // lance end, where the temtip plugs on
+const CRADLES = [20, -12]
 const POLE_R = 1.6
 
 const ring = (r, z) => Array.from({ length: 24 }, (_, i) => [r * Math.cos((i * Math.PI) / 12), r * Math.sin((i * Math.PI) / 12), z])
@@ -54,6 +56,30 @@ function cradle(yc, P) {
   ].join('')
 }
 
+// A convex loft between two parallel quads (same vertex order): the tapered
+// wedge between the contact block and the lance. Faces shaded by facing, like the kit.
+function loft(a, b, P) {
+  const view = G.viewOf(P)
+  const centre = G.mul3([...a, ...b].reduce(G.add3, [0, 0, 0]), 1 / 8)
+  const faces = [a, [...b].reverse(), ...a.map((_, i) => [a[i], b[i], b[(i + 1) % 4], a[(i + 1) % 4]])]
+  const flat = (ring) => k.pathOf(ring.map((p) => k.iso(p, P)), true)
+  const out = []
+  const edges = []
+  for (const face of faces) {
+    let n = G.cross3(G.sub3(face[1], face[0]), G.sub3(face[2], face[0]))
+    const mid = G.mul3(face.reduce(G.add3, [0, 0, 0]), 0.25)
+    if (G.dot3(n, G.sub3(mid, centre)) < 0) n = G.mul3(n, -1)
+    if (G.dot3(n, view) <= 1e-6) continue
+    const up = G.unit3(n)[2] > 0.6
+    out.push(up ? `<path class="iso-top" d="${flat(face)}"/>` : `<path class="iso-shade" data-shade="${Math.min(3, G.toneOf(n, P))}" d="${flat(face)}"/>`)
+    edges.push(flat(face))
+  }
+  const hull = k.pathOf(G.hullOf([...a, ...b].map((p) => k.iso(p, P))), true)
+  return `<g class="iso-solid"><path class="iso-fill" d="${hull}"/>${out.join('')}<path class="iso-line iso-crease" data-tone="faint" d="${edges.join('')}"/><path class="iso-line iso-edge" data-tone="hi" d="${hull}"/></g>`
+}
+
+const quad = (y, x, z0, z1) => [[-x, y, z0], [x, y, z0], [x, y, z1], [-x, y, z1]]
+
 export function frameAt(angle, digital) {
   const P = { ...P0, azimuth: A0 + angle }
   const h = digital ? 32 : 30
@@ -63,17 +89,32 @@ export function frameAt(angle, digital) {
   const put = (point, svg) => items.push({ depth: k.depthOf(point, P), svg })
 
   CRADLES.forEach((yc) => put([0, yc, PZ - POLE_R], cradle(yc, P)))
-  const neck = G.frameAlong([0, back, PZ], [0, -1, 0])
-  put([0, back - 5, PZ], S(G.solidOf([[0, 8], [5, 5, 1], [9, 3.2], [12, 3.2]], neck, P), { tone: 'mid', crease: 'none' }))
-  const from = back - 11
-  const pieces = tubePieces([[0, from, PZ], [0, TIP_Y - 1, PZ]], POLE_R, P, {
-    maxLength: 16,
+
+  // Contact block: a square block on the back of the head, tapering in a wedge to the lance.
+  const block = { x: -10, y: back - 7, w: 20, d: 7.2, r: 1 }
+  put([0, back - 3.5, PZ], S(k.slabOf(block, PZ - 9, 18, P, 2, 0.4), { tone: 'hi', crease: 'lo', inner: L(k.sideSeam(block, PZ - 6.5, P, 2), { tone: 'faint' }) }))
+  const taperEnd = back - 25
+  put([0, back - 14, PZ], loft(quad(back - 7, 9, PZ - 6, PZ + 8), quad(taperEnd, 2.4, PZ - 2.4, PZ + 2.4), P))
+
+  // Lance: straight steel tube, then a 30° bend down to the probe end.
+  const from = taperEnd + 1
+  const route = G.fillet([[0, from, PZ], [0, BEND_Y, PZ], END], 12, 9)
+  const pieces = tubePieces(route, POLE_R, P, {
+    maxLength: 14,
     caps: false,
     breaks: CRADLES.flatMap((yc) => [from - (yc + 3), from - (yc - 3)]),
   })
   pieces.forEach((piece) => put(piece.mid, tubeSvg(piece, { tone: 'hi' })))
-  const tip = G.frameAlong([0, TIP_Y, PZ], [0, -1, 0])
-  put([0, TIP_Y - 8, PZ], S(G.solidOf([[0, 2.6], [7, 2.6], [8, 3.4], [15, 3.4], [17, 2.2, 1]], tip, P), { tone: 'mid', crease: 'none', inner: L(G.arcOf(tip, 11.5, 3.4, P), { tone: 'faint' }) }))
+
+  // Coupling and temtip: the disposable immersion probe, a cardboard tube whose end gets dipped.
+  const F = G.frameAlong(END, DOWN)
+  const along = (s) => G.add3(END, G.mul3(DOWN, s))
+  put(along(0.8), S(G.disc(-1.2, 2.8, 2.5, F, P), { tone: 'mid', crease: 'none' }))
+  put(along(11), `<g class="th-card">${S(G.disc(2.8, 20, 4.2, F, P), { tone: 'hi', crease: 'none', inner: L(G.arcOf(F, 6, 4.2, P), { tone: 'lo' }) })}</g>`)
+  put(along(26), `<g class="th-slag">${S(G.solidOf([[20, 4.5], [30.5, 4.5, 1], [32.2, 3.4, 1], [33, 0]], F, P), { tone: 'hi', crease: 'none' })}${k.dotsSvg(
+    [22.5, 25.5, 28.5].flatMap((s, i) => G.dotsOf(F, s, 4.5, 9, P, { phase: i * 0.7, fade: [0.04, 0.42] })),
+    { size: 0.55, tone: 'mid' },
+  )}</g>`)
   items.sort((a, b) => a.depth - b.depth)
   const rest = items.map((item) => item.svg).join('')
 
