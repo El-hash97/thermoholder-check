@@ -18,8 +18,8 @@ const DECK_TOP = DECK_Z + DECK_H
 const BAR_X = [-148, 148]
 const LIFT = 7
 
-// Back tier left to right: TH9–TH12, MASTER, TH13–TH15. Front tier: TH1–TH8.
-const BACK_IDS = ['TH9', 'TH10', 'TH11', 'TH12', 'TH_Master', 'TH13', 'TH14', 'TH15']
+// Back tier left to right: TH9–TH13, MASTER, TH14–TH15. Front tier: TH1–TH8.
+const BACK_IDS = ['TH9', 'TH10', 'TH11', 'TH12', 'TH13', 'TH_Master', 'TH14', 'TH15']
 const FRONT_IDS = ['TH1', 'TH2', 'TH3', 'TH4', 'TH5', 'TH6', 'TH7', 'TH8']
 const slotX = (i) => -119 + i * PITCH
 
