@@ -63,7 +63,7 @@ function cradle(yc, P) {
 
 // A convex loft between two parallel quads (same vertex order): the tapered
 // wedge between the contact block and the lance. Faces shaded by facing, like the kit.
-function loft(a, b, P) {
+export function loft(a, b, P) {
   const view = G.viewOf(P)
   const centre = G.mul3([...a, ...b].reduce(G.add3, [0, 0, 0]), 1 / 8)
   const faces = [a, [...b].reverse(), ...a.map((_, i) => [a[i], b[i], b[(i + 1) % 4], a[(i + 1) % 4]])]
@@ -83,7 +83,7 @@ function loft(a, b, P) {
   return `<g class="iso-solid"><path class="iso-fill" d="${hull}"/>${out.join('')}<path class="iso-line iso-crease" data-tone="faint" d="${edges.join('')}"/><path class="iso-line iso-edge" data-tone="hi" d="${hull}"/></g>`
 }
 
-const quad = (y, x, z0, z1) => [[-x, y, z0], [x, y, z0], [x, y, z1], [-x, y, z1]]
+export const quad = (y, x, z0, z1) => [[-x, y, z0], [x, y, z0], [x, y, z1], [-x, y, z1]]
 
 export function frameAt(angle, digital) {
   const P = { ...P0, azimuth: A0 + angle }

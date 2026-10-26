@@ -19,9 +19,9 @@ const GLYPHS = {
   6: 'acdefg', 7: 'abc', 8: 'abcdefg', 9: 'abcdfg', '-': 'g', E: 'adefg', r: 'eg', ' ': '',
 }
 
-function SevenSeg({ text, x, y, pitch, tone }) {
-  const cells = text.padStart(4, ' ').slice(-4).split('')
-  const number = /^\d+$/.test(text)
+export function SevenSeg({ text, x, y, pitch, tone, size = 4, dot = true }) {
+  const cells = text.padStart(size, ' ').slice(-size).split('')
+  const number = dot && /^\d+$/.test(text)
   return (
     <g transform={`translate(${x} ${y})`}>
       {cells.map((ch, i) => (
@@ -33,7 +33,7 @@ function SevenSeg({ text, x, y, pitch, tone }) {
               className={(GLYPHS[ch] ?? '').includes(name) ? `th-seg-on th-seg-${tone}` : 'th-seg-off'}
             />
           ))}
-          <circle cx={SEG_W + 0.4} cy={SEG_H - 0.3} r={0.32} className={number && i === 3 ? `th-seg-on th-seg-${tone}` : 'th-seg-off'} />
+          <circle cx={SEG_W + 0.4} cy={SEG_H - 0.3} r={0.32} className={number && i === size - 1 ? `th-seg-on th-seg-${tone}` : 'th-seg-off'} />
         </g>
       ))}
     </g>

@@ -1,0 +1,48 @@
+{
+  "dependencies": "node_modules",
+  "modelScripts": ["model.js"],
+  "drawings": [
+    {
+      "id": "manual-thermoholder",
+      "title": "Manual thermoholder",
+      "description": "Illustrative parts breakdown of a Heraeus Electro-Nite Digilance manual thermoholder: stainless head with a red 7-segment display, handle, contact block with its taper, bent lance and a temtip. Proportions are estimated from photographs and the lance is shortened.",
+      "parts": [
+        {"id": "case", "name": "Stainless case"},
+        {"id": "faceplate", "name": "Face plate"},
+        {"id": "window", "name": "Display window"},
+        {"id": "button", "name": "Push button"},
+        {"id": "label", "name": "Unit number label"},
+        {"id": "handle", "name": "Handle"},
+        {"id": "block", "name": "Contact block"},
+        {"id": "taper", "name": "Taper"},
+        {"id": "lance", "name": "Lance"},
+        {"id": "tube", "name": "Temtip tube"},
+        {"id": "band", "name": "Brass band"},
+        {"id": "body", "name": "Temtip sensor body"},
+        {"id": "cap", "name": "Temtip cap"}
+      ],
+      "parameters": []
+    },
+    {
+      "id": "digital-thermoholder",
+      "title": "Digital thermoholder",
+      "description": "Illustrative parts breakdown of a Heraeus Electro-Nite digital thermoholder: rubber-housed head with an LCD and keypad, handle, contact block with its taper, bent lance and a temtip. Proportions are estimated from photographs and the lance is shortened.",
+      "parts": [
+        {"id": "case", "name": "Rubber housing"},
+        {"id": "faceplate", "name": "Face plate"},
+        {"id": "window", "name": "LCD window"},
+        {"id": "keypad", "name": "Keypad"},
+        {"id": "label", "name": "Unit number label"},
+        {"id": "handle", "name": "Handle"},
+        {"id": "block", "name": "Contact block"},
+        {"id": "taper", "name": "Taper"},
+        {"id": "lance", "name": "Lance"},
+        {"id": "tube", "name": "Temtip tube"},
+        {"id": "band", "name": "Brass band"},
+        {"id": "body", "name": "Temtip sensor body"},
+        {"id": "cap", "name": "Temtip cap"}
+      ],
+      "parameters": []
+    }
+  ]
+}

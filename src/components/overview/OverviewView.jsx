@@ -8,6 +8,7 @@ import { displayDate } from '../../lib/dateUtils.js'
 import { WIDTH, HEIGHT, LAYERS, BACK_HOLDERS, FRONT_HOLDERS } from './cartGeometry.js'
 import { ManualFace, DigitalFace } from './HolderFace.jsx'
 import HolderDetail, { Trend, STATUS_TEXT, STATUS_CLASS } from './HolderDetail.jsx'
+import { KPI_STATUS, KpiBlock, StatusDialog } from './StatusGroup.jsx'
 
 const ALL = [...BACK_HOLDERS, ...FRONT_HOLDERS]
 
@@ -59,6 +60,7 @@ export default function OverviewView({ data }) {
   const [hover, setHover] = useState(null)
   const [selected, setSelected] = useState('TH_Master')
   const [open, setOpen] = useState(false)
+  const [statusGroup, setStatusGroup] = useState(null)
 
   // The page still scrolls on short screens; Overview just shows no scrollbar.
   useEffect(() => {
@@ -133,6 +135,12 @@ export default function OverviewView({ data }) {
         </span>
       </div>
 
+      <div className="grid grid-cols-4 gap-2">
+        {KPI_STATUS.map(s => (
+          <KpiBlock key={s.id} status={s} count={counts[s.id]} onClick={() => setStatusGroup(s)} />
+        ))}
+      </div>
+
       <figure className="iso th-fig m-0" data-theme="dark">
         <div className="iso-plate rounded-xl overflow-hidden">
           <div className="iso-plate-corners" aria-hidden="true">
@@ -160,14 +168,6 @@ export default function OverviewView({ data }) {
         </div>
       </figure>
 
-      <div className="grid grid-cols-4 gap-2">
-        {Object.keys(counts).map(s => (
-          <div key={s} className={`border rounded-xl p-2 flex flex-col items-center ${STATUS_CLASS[s]}`}>
-            <span className="text-xl font-bold">{counts[s]}</span>
-            <span className="text-[11px] text-center leading-tight">{STATUS_TEXT[s]}</span>
-          </div>
-        ))}
-      </div>
 
       <div className="bg-white rounded-xl p-4 grid gap-4 sm:grid-cols-[1fr_240px]">
         <div className="flex flex-col gap-2">
@@ -189,6 +189,20 @@ export default function OverviewView({ data }) {
           <Trend points={trend} />
         </div>
       </div>
+
+      {statusGroup && (
+        <StatusDialog
+          status={statusGroup}
+          readings={readings}
+          time={time}
+          onClose={() => setStatusGroup(null)}
+          onPick={(id) => {
+            setStatusGroup(null)
+            setSelected(id)
+            setOpen(true)
+          }}
+        />
+      )}
 
       {open && (
         <HolderDetail

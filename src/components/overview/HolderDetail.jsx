@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, ZoomIn, ZoomOut, Pause, Play, RotateCcw } from 'lucide-react'
+import { X, ZoomIn, ZoomOut, Pause, Play, RotateCcw, Boxes } from 'lucide-react'
+import PartsDialog from './PartsDialog.jsx'
 import { STD_TOLERANCE } from '../../constants/units.js'
 import { displayDate } from '../../lib/dateUtils.js'
 import { WIDTH, HEIGHT, frameAt } from './turntableGeometry.js'
@@ -83,6 +84,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
   const [zoom, setZoom] = useState(1.2)
   const [spinning, setSpinning] = useState(true)
   const [angle, setAngle] = useState(0)
+  const [parts, setParts] = useState(false)
   const model = MODEL[holder.type]
   const Face = holder.digital ? DigitalFace : ManualFace
 
@@ -141,17 +143,21 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
   }, [onClose])
 
   const onPointerDown = (e) => {
-    state.current.drag = { x: e.clientX, angle: state.current.angle }
+    state.current.drag = { x: e.clientX, y: e.clientY, angle: state.current.angle, moved: false }
     e.currentTarget.setPointerCapture(e.pointerId)
   }
   const onPointerMove = (e) => {
     const s = state.current
     if (!s.drag) return
+    if (Math.hypot(e.clientX - s.drag.x, e.clientY - s.drag.y) > 5) s.drag.moved = true
     s.angle = s.drag.angle - (e.clientX - s.drag.x) * 0.6
   }
-  const onPointerUp = () => {
+  // A tap (no drag) on the turning holder opens its parts breakdown.
+  const onPointerUp = (e) => {
+    const tapped = e.type === 'pointerup' && state.current.drag && !state.current.drag.moved
     state.current.drag = null
     state.current.idle = performance.now() + 2500
+    if (tapped) setParts(true)
   }
 
   const vw = WIDTH / zoom, vh = HEIGHT / zoom
@@ -175,12 +181,12 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
             <div className="iso-plate-corners" aria-hidden="true">
               <span className="iso-plate-corner" data-corner="fig">Fig 2</span>
               <span className="iso-plate-corner" data-corner="title">{holder.label} · {holder.type}</span>
-              <span className="iso-plate-corner" data-corner="hint">Drag to turn · scroll to zoom</span>
+              <span className="iso-plate-corner" data-corner="hint">Tap for parts · drag to turn</span>
               <span className="iso-plate-corner" data-corner="readout">turn {angle}° · {zoom.toFixed(1)}×</span>
             </div>
             <div
               ref={stage}
-              className="touch-none cursor-grab active:cursor-grabbing select-none"
+              className="touch-none cursor-pointer active:cursor-grabbing select-none"
               onPointerDown={onPointerDown}
               onPointerMove={onPointerMove}
               onPointerUp={onPointerUp}
@@ -196,6 +202,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
             </div>
             <div className="absolute right-3 top-9 flex flex-col gap-1.5">
               {[
+                { label: 'Show parts', Icon: Boxes, on: () => setParts(true) },
                 { label: 'Zoom in', Icon: ZoomIn, on: () => setZoom(z => clamp(z * 1.25, ZOOM)) },
                 { label: 'Zoom out', Icon: ZoomOut, on: () => setZoom(z => clamp(z / 1.25, ZOOM)) },
                 { label: 'Reset view', Icon: RotateCcw, on: () => { setZoom(1.2); state.current.angle = 0 } },
@@ -267,6 +274,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
           </dl>
         </section>
       </div>
+      {parts && <PartsDialog holder={holder} onClose={() => setParts(false)} />}
     </div>
   )
 }

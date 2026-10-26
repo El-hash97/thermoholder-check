@@ -1,0 +1,13 @@
+{
+  "name": "thermoholder-teardown",
+  "private": true,
+  "description": "Generator for the thermoholder parts drawings (teardown viewer and app SVGs).",
+  "scripts": {
+    "build": "node scripts/build-viewer.cjs drawing.json ../../public/teardown/thermoholder.html && node render-app-svg.cjs"
+  },
+  "devDependencies": {
+    "@fontsource-variable/inter": "^5.1.0",
+    "jspdf": "^2.5.1",
+    "svg2pdf.js": "^2.2.4"
+  }
+}
