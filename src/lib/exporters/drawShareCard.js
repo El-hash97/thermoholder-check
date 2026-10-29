@@ -338,7 +338,7 @@ function drawThGrid(ctx, entries, x0, y0) {
 }
 
 // The Overview cart for one entry: the latest one when both groups are shared.
-async function drawCart(ctx, entries, checker, x, y) {
+async function drawCart(ctx, entries, checker, date, x, y) {
   roundRectPath(ctx, x, y, CONTENT_W, CART_H, 6)
   ctx.save()
   ctx.fillStyle = CART_BG
@@ -349,7 +349,7 @@ async function drawCart(ctx, entries, checker, x, y) {
     const time = entry.timestamp ? new Date(entry.timestamp).toTimeString().slice(0, 5) : '--:--'
     // Loaded on demand: it pulls in react-dom/server, which only sharing needs.
     const { cartImage } = await import('../../components/overview/cartMarkup.jsx')
-    const img = await cartImage({ values: entry.values, checker, time, background: CART_BG })
+    const img = await cartImage({ values: entry.values, checker, time, background: CART_BG, date: entry.date ?? date, group: entry.group })
     ctx.drawImage(img, x, y, CONTENT_W, CART_H)
     const badge = GROUP_BADGE[entry.group]?.label ?? String(entry.group).toUpperCase()
     drawText(ctx, `Overview · ${badge}`, x + 8, y + 10, { size: 9, weight: 700, color: '#94a3b8' })
@@ -380,7 +380,7 @@ export async function renderShareCardCanvas({ date, entries = [], checker = QUIC
   drawSummary(ctx, counts, PAD, y)
   y += SUMMARY_CARD_H + SUMMARY_MB
 
-  await drawCart(ctx, entries, checker, PAD, y)
+  await drawCart(ctx, entries, checker, date, PAD, y)
   y += CART_H + CART_MB
 
   const { groupsPresent } = drawChart(ctx, entries, PAD, y)

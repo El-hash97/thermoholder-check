@@ -6,6 +6,7 @@ import overviewCss from './overview.css?raw'
 import { WIDTH, HEIGHT, LAYERS, BACK_HOLDERS, FRONT_HOLDERS } from './cartGeometry.js'
 import { ManualFace, DigitalFace } from './HolderFace.jsx'
 import { displayValue } from '../../lib/displayValue.js'
+import { valueKey } from '../../lib/status.js'
 
 const html = (markup) => ({ __html: markup })
 
@@ -21,8 +22,8 @@ function StaticHolder({ holder, reading, time }) {
   )
 }
 
-export function cartSvgMarkup({ values = {}, checker, time = '--:--', background = '#131313' }) {
-  const holder = (h) => <StaticHolder key={h.id} holder={h} reading={displayValue(values[h.id], checker)} time={time} />
+export function cartSvgMarkup({ values = {}, checker, time = '--:--', background = '#131313', date = '', group = '' }) {
+  const holder = (h) => <StaticHolder key={h.id} holder={h} reading={displayValue(values[h.id], checker, valueKey(date, group, h.id))} time={time} />
   return renderToStaticMarkup(
     <svg
       xmlns="http://www.w3.org/2000/svg"

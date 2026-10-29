@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import { X, ZoomIn, ZoomOut, Pause, Play, RotateCcw, Boxes } from 'lucide-react'
 import PartsDialog from './PartsDialog.jsx'
 import { STD_TOLERANCE } from '../../constants/units.js'
+import { parseValue } from '../../lib/chartData.js'
+import { valueKey } from '../../lib/status.js'
 import { displayDate } from '../../lib/dateUtils.js'
 import { WIDTH, HEIGHT, frameAt } from './turntableGeometry.js'
 import { ManualFace, DigitalFace } from './HolderFace.jsx'
@@ -163,7 +165,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
   const vw = WIDTH / zoom, vh = HEIGHT / zoom
   const viewBox = `${(WIDTH - vw) / 2} ${(HEIGHT - vh) * 0.45} ${vw} ${vh}`
   const number = /^\d+$/.test(reading.text)
-  const deviation = String(raw).toLowerCase() === 'ok' ? 0 : Number(raw)
+  const deviation = parseValue(raw, valueKey(date, group, holder.id))
 
   return (
     <div className="fixed inset-0 z-40 bg-slate-900/70 flex items-center justify-center p-2 sm:p-4" onClick={onClose}>

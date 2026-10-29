@@ -2,7 +2,7 @@ import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import { UNITS, QUICK_CHECKER_REF, STD_TOLERANCE } from '../../constants/units.js'
 import { displayDate } from '../dateUtils.js'
-import { getStatus } from '../status.js'
+import { getStatus, lowHigh } from '../status.js'
 
 const STATUS_COLORS = {
   normal: [34, 197, 94],
@@ -62,8 +62,12 @@ function drawHeader(doc, logo, periodLabel, checker) {
 const TYPE_ABBR = { Manual: 'Man', Digital: 'Dig' }
 
 function abbrevValue(v) {
+  const side = lowHigh(v)
+  if (side) return side === 'low' ? 'LO' : 'HI'
   return String(v).toLowerCase() === 'error' ? 'Er' : v
 }
+
+const cellText = (v, compact) => (compact ? abbrevValue(v) : lowHigh(v) ? lowHigh(v).toUpperCase() : v)
 
 function drawTable(doc, dates, monthLabel, entries, { compact = false } = {}) {
   const groupLabels = compact ? ['R', 'W'] : ['Red', 'White']
@@ -87,8 +91,8 @@ function drawTable(doc, dates, monthLabel, entries, { compact = false } = {}) {
       const whiteE = entries.find(e => e.date === date && e.group === 'white')
       const rv = redE?.values?.[unit.id]   ?? 'X'
       const wv = whiteE?.values?.[unit.id] ?? 'X'
-      row.push({ content: compact ? abbrevValue(rv) : rv, status: getStatus(rv).status })
-      row.push({ content: compact ? abbrevValue(wv) : wv, status: getStatus(wv).status })
+      row.push({ content: cellText(rv, compact), status: getStatus(rv).status })
+      row.push({ content: cellText(wv, compact), status: getStatus(wv).status })
     })
     return row
   })

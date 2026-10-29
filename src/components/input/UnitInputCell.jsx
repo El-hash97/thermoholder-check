@@ -1,4 +1,4 @@
-import { getStatus } from '../../lib/status.js'
+import { getStatus, deviation } from '../../lib/status.js'
 
 const BG = {
   normal: 'border-green-400 bg-green-50 text-green-700',
@@ -7,11 +7,10 @@ const BG = {
   none:   'border-slate-300 bg-slate-50 text-slate-500',
 }
 
-function parseNumeric(val) {
-  const v = String(val ?? '').trim()
-  if (v.toLowerCase() === 'ok') return 0
-  const n = parseInt(v, 10)
-  return isNaN(n) ? null : n
+// The number the −/+ buttons step from: OK is 0, "low"/"high" their stand-in value.
+function parseNumeric(val, key) {
+  const n = deviation(val, key)
+  return Number.isInteger(n) ? n : null
 }
 
 function formatNum(n) {
@@ -19,12 +18,12 @@ function formatNum(n) {
   return n > 0 ? `+${n}` : `${n}`
 }
 
-export default function UnitInputCell({ unit, value, onChange }) {
+export default function UnitInputCell({ unit, value, valueKey = '', onChange }) {
   const { status } = getStatus(value)
   const colorClass = BG[status]
 
   function step(delta) {
-    const current = parseNumeric(value)
+    const current = parseNumeric(value, valueKey)
     const next = current === null ? delta : current + delta
     onChange(unit.id, formatNum(next))
   }
@@ -45,7 +44,7 @@ export default function UnitInputCell({ unit, value, onChange }) {
         inputMode="text"
         value={value}
         onChange={e => onChange(unit.id, e.target.value)}
-        placeholder="OK / X"
+        placeholder="OK / X / low / high"
         className={`flex-1 min-w-0 rounded-lg border px-2 py-3 text-base font-mono text-center
           focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors ${colorClass}`}
       />

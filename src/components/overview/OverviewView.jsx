@@ -4,6 +4,7 @@ import './overview.css'
 import { GROUPS } from '../../constants/units.js'
 import { displayValue } from '../../lib/displayValue.js'
 import { parseValue } from '../../lib/chartData.js'
+import { valueKey } from '../../lib/status.js'
 import { displayDate } from '../../lib/dateUtils.js'
 import { WIDTH, HEIGHT, LAYERS, BACK_HOLDERS, FRONT_HOLDERS } from './cartGeometry.js'
 import { ManualFace, DigitalFace } from './HolderFace.jsx'
@@ -69,7 +70,7 @@ export default function OverviewView({ data }) {
   }, [])
 
   const entry = entries.find(e => e.date === date && e.group === group)
-  const readings = Object.fromEntries(ALL.map(h => [h.id, displayValue(entry?.values?.[h.id], ref)]))
+  const readings = Object.fromEntries(ALL.map(h => [h.id, displayValue(entry?.values?.[h.id], ref, valueKey(date, group, h.id))]))
   const time = timeOf(entry?.timestamp)
 
   const counts = { normal: 0, oos: 0, error: 0, none: 0 }
@@ -85,7 +86,7 @@ export default function OverviewView({ data }) {
     .map(e => ({ date: e.date, raw: e.values?.[focus.id] }))
     .filter(p => ['normal', 'oos'].includes(displayValue(p.raw, ref).status))
     .slice(-7)
-    .map(p => ({ date: p.date, value: parseValue(p.raw) }))
+    .map(p => ({ date: p.date, value: parseValue(p.raw, valueKey(p.date, group, focus.id)) }))
 
   const holderProps = (h) => ({
     holder: h,

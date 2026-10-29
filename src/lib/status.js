@@ -19,6 +19,10 @@ export function getStatus(value) {
   if (v.toLowerCase() === 'error') {
     return { status: STATUS.ERROR, label: 'Error', color: 'status-error' }
   }
+  const side = lowHigh(v)
+  if (side) {
+    return { status: STATUS.OOS, label: side.toUpperCase(), color: 'status-oos' }
+  }
   const num = Number(v)
   if (!isNaN(num) && /^[+-]?\d+$/.test(v)) {
     if (num >= -5 && num <= 5) {
@@ -27,6 +31,27 @@ export function getStatus(value) {
     return { status: STATUS.OOS, label: v, color: 'status-oos' }
   }
   return { status: STATUS.NONE, label: v, color: 'status-none' }
+}
+
+// "low" / "high" (any case): the holder read below or above the checker's range.
+export function lowHigh(value) {
+  const m = String(value ?? '').trim().match(/^(low|high)$/i)
+  return m ? m[1].toLowerCase() : null
+}
+
+// Identifies one reading: the same key always gives the same low/high stand-in value.
+export const valueKey = (date, group, unitId) => `${date}|${group}|${unitId}`
+
+// Deviation as a number: "OK" is 0; "low"/"high" stand in as -6..-12 / +6..+12,
+// picked from a hash of `key` so a reading keeps its value on every render.
+export function deviation(raw, key = '') {
+  const v = String(raw ?? '').trim()
+  if (v.toLowerCase() === 'ok') return 0
+  const side = lowHigh(v)
+  if (!side) return Number(v)
+  let h = 2166136261 // FNV-1a
+  for (const ch of key) h = Math.imul(h ^ ch.charCodeAt(0), 16777619) >>> 0
+  return (side === 'low' ? -1 : 1) * (6 + (h % 7))
 }
 
 export function summarize(values) {

@@ -1,11 +1,7 @@
 import { UNITS } from '../constants/units.js'
-import { getStatus } from './status.js'
+import { getStatus, deviation, valueKey } from './status.js'
 
-export function parseValue(raw) {
-  const v = String(raw ?? '').trim()
-  if (v.toLowerCase() === 'ok') return 0
-  return Number(v)
-}
+export const parseValue = deviation
 
 export function buildPoints(entries) {
   const points = []
@@ -16,7 +12,7 @@ export function buildPoints(entries) {
       if (status !== 'normal' && status !== 'oos') return
       points.push({
         unit: unit.label,
-        value: parseValue(raw),
+        value: parseValue(raw, valueKey(entry.date, entry.group, unit.id)),
         group: entry.group,
         status,
       })
@@ -62,7 +58,7 @@ export function buildTrendPoints(entries, dates, group) {
             date,
             unit: unit.id,
             unitLabel: unit.label,
-            value: parseValue(raw),
+            value: parseValue(raw, valueKey(date, group, unit.id)),
             status,
           })
         })

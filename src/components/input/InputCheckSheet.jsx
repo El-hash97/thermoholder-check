@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react'
 import { UNITS, STD_TOLERANCE, QUICK_CHECKER_REF } from '../../constants/units.js'
 import { formatDate } from '../../lib/dateUtils.js'
+import { valueKey } from '../../lib/status.js'
 import DateGroupPicker from './DateShiftGroupPicker.jsx'
 import UnitInputCell from './UnitInputCell.jsx'
 import { Save, Share2, X } from 'lucide-react'
@@ -43,7 +44,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
   async function handleShare() {
     setSharing(true)
     try {
-      const canvas = await renderShareCardCanvas({ date, entries: [{ group, values, timestamp: new Date().toISOString() }], checker })
+      const canvas = await renderShareCardCanvas({ date, entries: [{ date, group, values, timestamp: new Date().toISOString() }], checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
       await shareCanvas(canvas)
     } catch (e) {
@@ -70,6 +71,7 @@ export default function InputCheckSheet({ data, onSubmit }) {
             key={unit.id}
             unit={unit}
             value={values[unit.id] ?? ''}
+            valueKey={valueKey(date, group, unit.id)}
             onChange={(id, val) => setValues(prev => ({ ...prev, [id]: val }))}
           />
         ))}
