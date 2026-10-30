@@ -13,9 +13,10 @@ export function handleSvg(cx, cy, z, P) {
   ].join('')
 }
 
-export function manualSvg(cx, cy, z, P, lit = false) {
+// `faceOut` slides the face plate forward (+y) off the case, for the exploded view.
+export function manualSvg(cx, cy, z, P, lit = false, faceOut = 0) {
   const box = { x: cx - 14, y: cy - 8, w: 28, d: 16, r: 1.4 }
-  const plate = { x: cx - 13, y: cy + 7.8, w: 26, d: 1, r: 0.5 }
+  const plate = { x: cx - 13, y: cy + 7.8 + faceOut, w: 26, d: 1, r: 0.5 }
   const top = z + 30
   return [
     '<g class="th-steel">',
@@ -27,9 +28,9 @@ export function manualSvg(cx, cy, z, P, lit = false) {
   ].join('')
 }
 
-export function digitalSvg(cx, cy, z, P, lit = false) {
+export function digitalSvg(cx, cy, z, P, lit = false, faceOut = 0) {
   const box = { x: cx - 15, y: cy - 9, w: 30, d: 18, r: 3.6 }
-  const plate = { x: cx - 13.5, y: cy + 8.8, w: 27, d: 0.9, r: 0.8 }
+  const plate = { x: cx - 13.5, y: cy + 8.8 + faceOut, w: 27, d: 0.9, r: 0.8 }
   return [
     '<g class="th-rubber">',
     S(k.slabOf(box, z, 32, P, 5, 1.2), { tone: 'hi', crease: 'lo', lit, inner: L(k.sideSeam(box, z + 3, P, 5), { tone: 'faint' }) }),

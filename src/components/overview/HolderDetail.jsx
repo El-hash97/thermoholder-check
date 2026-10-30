@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { X, ZoomIn, ZoomOut, Pause, Play, RotateCcw, Boxes } from 'lucide-react'
+import { X, ZoomIn, ZoomOut, Pause, Play, RotateCcw, Boxes, Expand, Shrink } from 'lucide-react'
 import PartsDialog from './PartsDialog.jsx'
 import { STD_TOLERANCE } from '../../constants/units.js'
 import { parseValue } from '../../lib/chartData.js'
@@ -82,11 +82,12 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
   const face = useRef(null)
   const stage = useRef(null)
   const dialog = useRef(null)
-  const state = useRef({ angle: 0, spinning: true, drag: null, idle: 0 })
+  const state = useRef({ angle: 0, spinning: true, drag: null, idle: 0, explode: 0, exploded: false })
   const [zoom, setZoom] = useState(1.2)
   const [spinning, setSpinning] = useState(true)
   const [angle, setAngle] = useState(0)
   const [parts, setParts] = useState(false)
+  const [exploded, setExploded] = useState(false)
   const model = MODEL[holder.type]
   const Face = holder.digital ? DigitalFace : ManualFace
 
@@ -94,11 +95,13 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
     const still = matchMedia('(prefers-reduced-motion: reduce)').matches
     const s = state.current
     let frame = 0, last = 0, shown = null
+    const ease = (t) => t * t * (3 - 2 * t)
     const draw = () => {
       const a = ((s.angle % 360) + 360) % 360
-      if (shown === Math.round(a * 4)) return
-      shown = Math.round(a * 4)
-      const f = frameAt(a, holder.digital)
+      const key = Math.round(a * 4) * 1000 + Math.round(s.explode * 500)
+      if (shown === key) return
+      shown = key
+      const f = frameAt(a, holder.digital, ease(s.explode))
       before.current.innerHTML = f.before
       after.current.innerHTML = f.after
       face.current.setAttribute('transform', f.face)
@@ -109,6 +112,9 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
       const dt = last ? Math.min((now - last) / 1000, 1 / 20) : 0
       last = now
       if (s.spinning && !s.drag && !still && now > s.idle) s.angle += SPEED * dt
+      // Explode / assemble: a linear ramp of about 0.8 s, eased in draw().
+      const target = s.exploded ? 1 : 0
+      s.explode = still ? target : target > s.explode ? Math.min(target, s.explode + dt / 0.8) : Math.max(target, s.explode - dt / 0.8)
       draw()
       frame = requestAnimationFrame(tick)
     }
@@ -117,6 +123,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
   }, [holder.digital])
 
   useEffect(() => { state.current.spinning = spinning }, [spinning])
+  useEffect(() => { state.current.exploded = exploded }, [exploded])
   useEffect(() => { dialog.current.focus({ preventScroll: true }) }, [])
 
   useEffect(() => {
@@ -154,12 +161,12 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
     if (Math.hypot(e.clientX - s.drag.x, e.clientY - s.drag.y) > 5) s.drag.moved = true
     s.angle = s.drag.angle - (e.clientX - s.drag.x) * 0.6
   }
-  // A tap (no drag) on the turning holder opens its parts breakdown.
+  // A tap (no drag) on the turning holder explodes it, or puts it back together.
   const onPointerUp = (e) => {
     const tapped = e.type === 'pointerup' && state.current.drag && !state.current.drag.moved
     state.current.drag = null
     state.current.idle = performance.now() + 2500
-    if (tapped) setParts(true)
+    if (tapped) setExploded(v => !v)
   }
 
   const vw = WIDTH / zoom, vh = HEIGHT / zoom
@@ -183,8 +190,8 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
             <div className="iso-plate-corners" aria-hidden="true">
               <span className="iso-plate-corner" data-corner="fig">Fig 2</span>
               <span className="iso-plate-corner" data-corner="title">{holder.label} · {holder.type}</span>
-              <span className="iso-plate-corner" data-corner="hint">Tap for parts · drag to turn</span>
-              <span className="iso-plate-corner" data-corner="readout">turn {angle}° · {zoom.toFixed(1)}×</span>
+              <span className="iso-plate-corner" data-corner="hint">Tap to {exploded ? 'assemble' : 'explode'} · drag to turn</span>
+              <span className="iso-plate-corner" data-corner="readout">{exploded ? 'exploded · ' : ''}turn {angle}° · {zoom.toFixed(1)}×</span>
             </div>
             <div
               ref={stage}
@@ -204,6 +211,7 @@ export default function HolderDetail({ holder, reading, raw, entry, date, group,
             </div>
             <div className="absolute right-3 top-9 flex flex-col gap-1.5">
               {[
+                { label: exploded ? 'Assemble' : 'Explode', Icon: exploded ? Shrink : Expand, on: () => setExploded(v => !v) },
                 { label: 'Show parts', Icon: Boxes, on: () => setParts(true) },
                 { label: 'Zoom in', Icon: ZoomIn, on: () => setZoom(z => clamp(z * 1.25, ZOOM)) },
                 { label: 'Zoom out', Icon: ZoomOut, on: () => setZoom(z => clamp(z / 1.25, ZOOM)) },

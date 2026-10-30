@@ -29,6 +29,14 @@ const ring = (r, z) => Array.from({ length: 24 }, (_, i) => [r * Math.cos((i * M
 const REACH = -BEND_Y + (14 + TEMTIP) * Math.cos(DIP)
 const P0 = k.fitProjection([...ring(PLINTH_R, 0), ...ring(PLINTH_R, 64), ...ring(REACH, 12), ...ring(REACH, PZ + 4)], WIDTH, HEIGHT, { pad: 14, azimuth: A0 })
 
+// Exploded view, at explode = 1: the head lifts off its handle and its face plate
+// slides forward; the contact block, taper and lance pull back along the lance
+// axis; the temtip pieces separate along the bent end. The camera eases out to fit.
+const EX = { lift: 16, face: 14, block: -7, taper: -15, lance: -18, tip: { tube: 6, band: 10, body: 14, cap: 20 } }
+const REACH_E = REACH - EX.lance + EX.tip.cap * Math.cos(DIP)
+const P1 = k.fitProjection([...ring(PLINTH_R, 0), ...ring(PLINTH_R, 82), ...ring(REACH_E, -6), ...ring(REACH_E, PZ + 4)], WIDTH, HEIGHT, { pad: 14, azimuth: A0 })
+const mix = (a, b, t) => a + (b - a) * t
+
 const S = (paths, style) => k.solidSvg(paths, style)
 const L = (d, style) => k.lineSvg(d, style)
 
@@ -85,8 +93,9 @@ export function loft(a, b, P) {
 
 export const quad = (y, x, z0, z1) => [[-x, y, z0], [x, y, z0], [x, y, z1], [-x, y, z1]]
 
-export function frameAt(angle, digital) {
-  const P = { ...P0, azimuth: A0 + angle }
+export function frameAt(angle, digital, explode = 0) {
+  const e = explode
+  const P = { ...P0, origin: [mix(P0.origin[0], P1.origin[0], e), mix(P0.origin[1], P1.origin[1], e)], scale: mix(P0.scale, P1.scale, e), azimuth: A0 + angle }
   const h = digital ? 32 : 30
   const z0 = PZ - h / 2
   const back = HY - (digital ? 9 : 8)
@@ -96,33 +105,38 @@ export function frameAt(angle, digital) {
   CRADLES.forEach((yc) => put([0, yc, PZ - POLE_R], cradle(yc, P)))
 
   // Contact block: a square block on the back of the head, tapering in a wedge to the lance.
-  const block = { x: -10, y: back - 7, w: 20, d: 7.2, r: 1 }
-  put([0, back - 3.5, PZ], S(k.slabOf(block, PZ - 9, 18, P, 2, 0.4), { tone: 'hi', crease: 'lo', inner: L(k.sideSeam(block, PZ - 6.5, P, 2), { tone: 'faint' }) }))
+  const by = back + EX.block * e
+  const block = { x: -10, y: by - 7, w: 20, d: 7.2, r: 1 }
+  put([0, by - 3.5, PZ], S(k.slabOf(block, PZ - 9, 18, P, 2, 0.4), { tone: 'hi', crease: 'lo', inner: L(k.sideSeam(block, PZ - 6.5, P, 2), { tone: 'faint' }) }))
+  const ty = back + EX.taper * e
   const taperEnd = back - 25
-  put([0, back - 14, PZ], loft(quad(back - 7, 9, PZ - 6, PZ + 8), quad(taperEnd, 2.4, PZ - 2.4, PZ + 2.4), P))
+  put([0, ty - 14, PZ], loft(quad(ty - 7, 9, PZ - 6, PZ + 8), quad(taperEnd + EX.taper * e, 2.4, PZ - 2.4, PZ + 2.4), P))
 
   // Lance: straight steel tube past the rim, then a 35° bend down to the probe end.
+  const shift = [0, EX.lance * e, 0]
   const from = taperEnd + 1
-  const route = G.fillet([[0, from, PZ], [0, BEND_Y, PZ], END], 12, 9)
+  const route = G.fillet([[0, from, PZ], [0, BEND_Y, PZ], END], 12, 9).map((p) => G.add3(p, shift))
   const pieces = tubePieces(route, POLE_R, P, {
     maxLength: 14,
     caps: false,
-    breaks: CRADLES.flatMap((yc) => [from - (yc + 3), from - (yc - 3)]),
+    breaks: CRADLES.flatMap((yc) => [from - (yc + 3 - shift[1]), from - (yc - 3 - shift[1])]).filter((s) => s > 0),
   })
   pieces.forEach((piece) => put(piece.mid, tubeSvg(piece, { tone: 'hi' })))
 
   // Temtip: the disposable immersion probe pushed over the lance end. A slim kraft
   // cardboard tube with a brass band, then the thicker white sensor body, then a
-  // short slim cap at the end that is dipped.
-  const F = G.frameAlong(END, DOWN)
-  const along = (s) => G.add3(END, G.mul3(DOWN, s))
+  // short slim cap at the end that is dipped. Exploded, each piece slides further
+  // off the lance end along its axis.
+  const end = G.add3(END, shift)
   const T = { tube: [-3, 17], band: [15, 16.4], body: [17, 32], cap: [32, TEMTIP - 3] }
-  const part = (cls, profile, at, style = {}) =>
-    put(along(at), `<g class="${cls}">${S(G.solidOf(profile, F, P), { tone: 'hi', crease: 'none', ...style })}</g>`)
-  part('th-kraft', [[T.tube[0], 3], [T.tube[1], 3]], (T.tube[0] + T.tube[1]) / 2, { inner: L(G.arcOf(F, 1, 3, P), { tone: 'lo' }) })
-  part('th-brass', [[T.band[0], 3.35], [T.band[1], 3.35]], (T.band[0] + T.band[1]) / 2)
-  part('th-card', [[T.body[0], 3.6], [T.body[0] + 0.8, 4.6, 1], [T.body[1] - 0.8, 4.6, 1], [T.body[1], 3.8]], (T.body[0] + T.body[1]) / 2)
-  part('th-kraft', [[T.cap[0], 2.5], [T.cap[1] - 1.2, 2.5, 1], [T.cap[1] - 0.3, 1.8, 1], [T.cap[1], 0]], (T.cap[0] + T.cap[1]) / 2)
+  const part = (cls, profile, at, gap, style = {}) => {
+    const F = G.frameAlong(G.add3(end, G.mul3(DOWN, gap * e)), DOWN)
+    put(G.add3(F.o, G.mul3(DOWN, at)), `<g class="${cls}">${S(G.solidOf(profile, F, P), { tone: 'hi', crease: 'none', ...(typeof style === 'function' ? style(F) : style) })}</g>`)
+  }
+  part('th-kraft', [[T.tube[0], 3], [T.tube[1], 3]], (T.tube[0] + T.tube[1]) / 2, EX.tip.tube, (F) => ({ inner: L(G.arcOf(F, 1, 3, P), { tone: 'lo' }) }))
+  part('th-brass', [[T.band[0], 3.35], [T.band[1], 3.35]], (T.band[0] + T.band[1]) / 2, EX.tip.band)
+  part('th-card', [[T.body[0], 3.6], [T.body[0] + 0.8, 4.6, 1], [T.body[1] - 0.8, 4.6, 1], [T.body[1], 3.8]], (T.body[0] + T.body[1]) / 2, EX.tip.body)
+  part('th-kraft', [[T.cap[0], 2.5], [T.cap[1] - 1.2, 2.5, 1], [T.cap[1] - 0.3, 1.8, 1], [T.cap[1], 0]], (T.cap[0] + T.cap[1]) / 2, EX.tip.cap)
 
   // Parts hanging past the rim on the far side are hidden behind the turntable.
   const view = k.towardViewer(P)
@@ -132,13 +146,14 @@ export function frameAt(angle, digital) {
   const hidden = join(items.filter((item) => behind(item.point)))
   const rest = join(items.filter((item) => !behind(item.point)))
 
-  const head = handleSvg(0, HY, z0, P) + (digital ? digitalSvg : manualSvg)(0, HY, z0, P)
+  const lift = EX.lift * e, faceOut = EX.face * e
+  const head = handleSvg(0, HY, z0, P) + (digital ? digitalSvg : manualSvg)(0, HY, z0 + lift, P, false, faceOut)
   // Seen from the display side the whole lance is behind the head; from the back it is all in front.
   const frontOn = view[1] > 0
   return {
     before: hidden + base(P) + (frontOn ? rest : '') + head,
     after: frontOn ? '' : rest,
-    face: faceMatrix(0, HY, z0, digital, P),
+    face: faceMatrix(0, HY + faceOut, z0 + lift, digital, P),
     faceOn: frontOn,
   }
 }
