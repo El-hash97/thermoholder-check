@@ -1,11 +1,11 @@
-﻿import { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { UNITS, STD_TOLERANCE, QUICK_CHECKER_REF } from '../../constants/units.js'
 import { formatDate } from '../../lib/dateUtils.js'
 import { valueKey } from '../../lib/status.js'
 import DateGroupPicker from './DateShiftGroupPicker.jsx'
 import UnitInputCell from './UnitInputCell.jsx'
 import { Save, Share2, X } from 'lucide-react'
-import { shareCanvas } from '../../lib/exporters/imageExport.js'
+import { shareCanvas, buildShareCaption, buildShareFilename } from '../../lib/exporters/imageExport.js'
 import { renderShareCardCanvas } from '../../lib/exporters/drawShareCard.js'
 
 const emptyValues = () => Object.fromEntries(UNITS.map(u => [u.id, '']))
@@ -46,7 +46,9 @@ export default function InputCheckSheet({ data, onSubmit }) {
     try {
       const canvas = await renderShareCardCanvas({ date, entries: [{ date, group, values, timestamp: new Date().toISOString() }], checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
-      await shareCanvas(canvas)
+      const caption = buildShareCaption({ date, group })
+      const filename = buildShareFilename({ date, group })
+      await shareCanvas(canvas, { filename, title: caption, text: caption })
     } catch (e) {
       console.error(e)
     } finally {

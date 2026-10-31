@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Share2, X } from 'lucide-react'
-import { shareCanvas } from '../../lib/exporters/imageExport.js'
+import { shareCanvas, buildShareCaption, buildShareFilename } from '../../lib/exporters/imageExport.js'
 import { renderShareCardCanvas } from '../../lib/exporters/drawShareCard.js'
 
 export default function ExportMenu({ date, entries, checker }) {
@@ -14,7 +14,9 @@ export default function ExportMenu({ date, entries, checker }) {
     try {
       const canvas = await renderShareCardCanvas({ date, entries, checker })
       setPreviewUrl(canvas.toDataURL('image/jpeg', 0.95))
-      await shareCanvas(canvas)
+      const caption = buildShareCaption({ date, entries })
+      const filename = buildShareFilename({ date, entries })
+      await shareCanvas(canvas, { filename, title: caption, text: caption })
       setPreviewUrl(null)
     } catch (e) {
       console.error(e)

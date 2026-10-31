@@ -6,6 +6,7 @@ node_modules
 
 # Design reference photos (large; not shipped)
 public/referensi/
+dist/referensi/
 
 # Teardown generator scratch output
 tools/teardown/proof*/
